@@ -1,4 +1,14 @@
+/*
+#TODO:
+1. Material System, manage materials in model class set texture in material, update how load models 
+2. refactor function names
+*/
+
 #include "Application.hpp"
+
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
 #include <iostream>
 
 Application::Application() {
@@ -14,4 +24,13 @@ void Application::run() {
         m_window.pollEvents();
         m_window.swapBuffers();
     }
+}
+
+void Application::loadRenderObjects() {
+    auto model = Model("models/grass_cube/Grass_Block.obj");
+    m_models.emplace(0, model);
+}
+
+void Application::render() {
+    
 }
