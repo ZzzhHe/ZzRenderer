@@ -36,3 +36,7 @@
 # Cmake Build
 build/
 bin/
+
+# Visual Studio Code
+.vscode/
+.cashe/
