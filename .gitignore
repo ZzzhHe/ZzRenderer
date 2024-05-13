@@ -5,7 +5,6 @@
 *.slo
 *.lo
 *.o
-*.obj
 
 # Precompiled Headers
 *.gch
@@ -30,3 +29,10 @@
 *.exe
 *.out
 *.app
+
+# MacOS
+**/.DS_Store
+
+# Cmake Build
+build/
+bin/

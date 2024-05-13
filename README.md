@@ -1,2 +1,2 @@
 # ZzRenderer
-A simple 3d graphics renderer for models
+An OpenGL 3d graphics renderer 
