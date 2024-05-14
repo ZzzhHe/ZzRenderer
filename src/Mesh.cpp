@@ -32,3 +32,11 @@ void Mesh::render() {
     this->m_IBO->bind();
     GLCall(glDrawElements(GL_TRIANGLES, this->m_IBO->getCount(), GL_UNSIGNED_INT, nullptr));
 }
+
+void Mesh::setShader(std::shared_ptr<Shader> shader) {
+    m_material->shader = shader;
+}
+
+void Mesh::setMaterial(std::shared_ptr<Material> material) {
+    m_material = material;
+}

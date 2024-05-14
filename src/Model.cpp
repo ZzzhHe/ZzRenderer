@@ -2,17 +2,49 @@
 
 #include <iostream>
 
+// static member initialization, must be done outside of the class
+Model::mesh_id_t Model::m_current_id = 0;
+
 void Model::render() const {
-    for (auto &mesh : m_meshes) {
-        mesh->render();
+    for (auto &kv : m_meshes) {
+        kv.second->render();
     }
 }
 
 Model::Model(const char *path) {
     loadModel(path);
+    m_current_id = 0;
 }
 
 Model::~Model() {
+}
+
+void Model::setShader(std::shared_ptr<Shader> shader) {
+    for (auto &kv : m_meshes) {
+        kv.second->setShader(shader);
+    }
+}
+
+void Model::setShader(mesh_id_t mesh_id, std::shared_ptr<Shader> shader) {
+    auto it = m_meshes.find(mesh_id);
+    if (it == m_meshes.end()) {
+        throw std::runtime_error("Mesh id not found");
+    }
+    m_meshes[mesh_id]->setShader(shader);
+}
+
+void Model::setMaterial(std::shared_ptr<Material> material) {
+    for (auto &kv : m_meshes) {
+        kv.second->setMaterial(material);
+    }
+}
+
+void Model::setMaterial(mesh_id_t mesh_id, std::shared_ptr<Material> material) {
+    auto it = m_meshes.find(mesh_id);
+    if (it == m_meshes.end()) {
+        throw std::runtime_error("Mesh id not found");
+    }
+    m_meshes[mesh_id]->setMaterial(material);
 }
 
 void Model::loadModel(const std::string& path) {
@@ -35,7 +67,8 @@ void Model::processNode(aiNode *node, const aiScene *scene) {
     }
     for (unsigned int i = 0; i < node->mNumMeshes; i ++) {
         aiMesh *mesh = scene->mMeshes[node->mMeshes[i]];
-        m_meshes.push_back(processMesh(mesh, scene));
+        m_meshes[m_current_id] = processMesh(mesh, scene);
+        m_current_id ++;
     }
     for (unsigned int i = 0; i < node->mNumChildren; i ++) {
         processNode(node->mChildren[i], scene);

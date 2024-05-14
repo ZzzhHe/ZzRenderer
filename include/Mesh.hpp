@@ -24,6 +24,8 @@ public:
     virtual ~Mesh();
 
     virtual void render();
+    void setMaterial(std::shared_ptr<Material> material);
+    void setShader(std::shared_ptr<Shader> shader);
 
 protected:
     VertexArray *m_VAO;
