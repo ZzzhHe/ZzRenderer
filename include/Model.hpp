@@ -2,7 +2,6 @@
 
 #include <vector>
 #include "Mesh.hpp"
-#include "Shader.hpp"
 
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
@@ -12,7 +11,7 @@ class Model {
 public :
     Model(const char *path);
     ~Model();
-    void Render(Shader *shader);
+    void render() const;
 
 private :
     void loadModel(const std::string& path);

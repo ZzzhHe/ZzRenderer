@@ -6,10 +6,8 @@
 
 #include "IndexBuffer.hpp"
 #include "VertexArray.hpp"
-#include "VertexBufferLayout.hpp"
 
-#include "Texture.hpp"
-#include "Shader.hpp"
+#include "Material.hpp"
 
 struct Vertex{
     glm::vec3 Position;
@@ -22,14 +20,14 @@ struct Vertex{
 class Mesh {
 public:
     Mesh() = default;
-    Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<std::shared_ptr<Texture>> textures = {});
+    Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::shared_ptr<Material> material);
     virtual ~Mesh();
 
-    virtual void Render(Shader *shader);
+    virtual void render();
 
 protected:
     VertexArray *m_VAO;
     VertexBuffer *m_VBO;
     IndexBuffer *m_IBO;
-    std::vector<std::shared_ptr<Texture>> textures;
+    std::shared_ptr<Material> m_material;
 };

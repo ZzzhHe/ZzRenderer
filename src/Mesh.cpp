@@ -3,7 +3,8 @@
 
 #include <iostream>
 
-Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<std::shared_ptr<Texture>> textures){
+Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::shared_ptr<Material> material) 
+    : m_material(material){
 
     this->m_VAO = new VertexArray();
 
@@ -12,11 +13,11 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std:
     this->m_IBO = new IndexBuffer(&indices[0], indices.size());
 
     VertexBufferLayout layout;
-    layout.Push<float>(3); // Position
-    layout.Push<float>(2); // TexCoords
-    layout.Push<float>(3); // Normal
+    layout.push<float>(3); // Position
+    layout.push<float>(2); // TexCoords
+    layout.push<float>(3); // Normal
 
-    this->m_VAO->AddBuffer(*this->m_VBO, layout);
+    this->m_VAO->addBuffer(*this->m_VBO, layout);
 }
 
 Mesh::~Mesh() {
@@ -25,10 +26,9 @@ Mesh::~Mesh() {
     delete this->m_IBO;
 }
 
-void Mesh::Render(Shader* shader) {
-    shader->use();
-    this->m_VAO->Bind();
-    this->m_IBO->Bind();
-    GLCall(glDrawElements(GL_TRIANGLES, this->m_IBO->GetCount(), GL_UNSIGNED_INT, nullptr));
-    shader->unUse();
+void Mesh::render() {
+    m_material->apply();
+    this->m_VAO->bind();
+    this->m_IBO->bind();
+    GLCall(glDrawElements(GL_TRIANGLES, this->m_IBO->getCount(), GL_UNSIGNED_INT, nullptr));
 }

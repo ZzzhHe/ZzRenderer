@@ -1,7 +1,7 @@
 /*
 #TODO:
-1. Material System, manage materials in model class set texture in material, update how load models 
-2. refactor function names
+1. think of how to set shader to one model and each meshes in the model 
+2. seperate shader to vertex and fragment shader
 */
 
 #include "Application.hpp"
@@ -29,6 +29,8 @@ void Application::run() {
 void Application::loadRenderObjects() {
     auto model = Model("models/grass_cube/Grass_Block.obj");
     m_models.emplace(0, model);
+
+
 }
 
 void Application::render() {

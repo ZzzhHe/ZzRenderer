@@ -2,9 +2,9 @@
 
 #include <iostream>
 
-void Model::Render(Shader* shader) {
-    for (unsigned int i = 0; i < m_meshes.size(); i++) {
-        m_meshes[i]->Render(shader);
+void Model::render() const {
+    for (auto &mesh : m_meshes) {
+        mesh->render();
     }
 }
 
@@ -86,7 +86,8 @@ std::shared_ptr<Mesh> Model::processMesh(aiMesh *mesh, const aiScene *scene) {
         textures.insert(textures.end(), emissionMaps.begin(), emissionMaps.end());
     }
 
-    return std::make_shared<Mesh>(std::move(vertices), std::move(indices), std::move(textures));
+    auto material = std::make_shared<Material>(textures);
+    return std::make_shared<Mesh>(vertices, indices, material);
 }
 
 std::vector<std::shared_ptr<Texture>> Model::loadMaterialTextures(aiMaterial *material, aiTextureType type, TextureType typeName) {
@@ -96,8 +97,7 @@ std::vector<std::shared_ptr<Texture>> Model::loadMaterialTextures(aiMaterial *ma
         aiString str;
         material->GetTexture(type, i, &str);
         skip = false;
-        for(unsigned int j = 0; j < m_loaded_textures.size(); j++)
-        {
+        for(unsigned int j = 0; j < m_loaded_textures.size(); j++) {
             if(std::strcmp(m_loaded_textures[j]->getFilePath().data(), str.C_Str()) == 0) {
                 textures.push_back(m_loaded_textures[j]);
                 skip = true;
