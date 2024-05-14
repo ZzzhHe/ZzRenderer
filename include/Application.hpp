@@ -2,6 +2,7 @@
 
 #include "Model.hpp"
 #include "Window.hpp"
+#include "Renderer.hpp"
 #include <unordered_map>
 
 class Application {
@@ -18,10 +19,10 @@ public:
 
 private:
     void loadRenderObjects();
-    void render();
 
 private:
     Window m_window{WIDTH, HEIGHT, "OpenGL"};
+    Renderer m_renderer{};
     model_map_t m_models; // will be replaced by a scene graph(render object)
     static model_id_t m_current_id;
 };

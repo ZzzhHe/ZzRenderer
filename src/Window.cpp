@@ -20,11 +20,12 @@ Window::Window(int width, int height, const char* title)
     glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 
     initGLAD();
-    setGlobalOpenGLState();
 }
 
 Window::~Window() {
-    glfwDestroyWindow(m_window);
+    if (m_window) {
+        glfwDestroyWindow(m_window);
+    }
     glfwTerminate();
 }
 
@@ -76,17 +77,6 @@ void Window::initGLAD() {
     }
 }
 
-void Window::setGlobalOpenGLState() {
-    glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LESS);
-}
-
 void Window::framebufferSizeCallback(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, width, height);
-}
-
-
-void Window::clear() const {
-    glClearColor(0.9f, 0.9f, 0.9f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }

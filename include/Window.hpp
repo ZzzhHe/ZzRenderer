@@ -6,10 +6,11 @@ public:
     Window(int width, int height, const char *title);
     ~Window();
 
-    bool shouldClose() const;
+    
     void swapBuffers();
     void pollEvents();
-    void clear() const;
+
+    bool shouldClose() const;
 
     GLFWwindow *getGLFWWindow() const;
 
@@ -20,7 +21,6 @@ private:
     void createWindow();
     void initGLAD();
     void setWindowHints();
-    void setGlobalOpenGLState();
 
 private:
     int m_width, m_height;

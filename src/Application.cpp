@@ -26,12 +26,15 @@ void Application::run() {
 
     while (!m_window.shouldClose()) {
         m_window.pollEvents();
-        m_window.clear();
+        m_renderer.clearColor(0.8f, 0.8f, 0.8f, 1.0f);
+        m_renderer.clear();
         shader->use();
         shader->setMat4("model", model);
         shader->setMat4("view", viewMatrix);
         shader->setMat4("projection", projectionMatrix);
-        render();
+        for (const auto& model : m_models) {
+            m_renderer.render(model.second);
+        }
         m_window.swapBuffers();
     }
 }
@@ -40,10 +43,4 @@ void Application::loadRenderObjects() {
     auto model = std::make_shared<Model>("models/grass_cube/Grass_Block.obj");
     m_models.emplace(m_current_id, model);
     m_current_id++;
-}
-
-void Application::render() {
-    for (auto &kv : m_models) {
-        kv.second->render();
-    }
 }
