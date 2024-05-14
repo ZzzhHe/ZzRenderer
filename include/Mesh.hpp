@@ -21,9 +21,9 @@ class Mesh {
 public:
     Mesh() = default;
     Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::shared_ptr<Material> material);
-    virtual ~Mesh();
+    ~Mesh();
 
-    virtual void render();
+    void render();
     void setMaterial(std::shared_ptr<Material> material);
     void setShader(std::shared_ptr<Shader> shader);
 

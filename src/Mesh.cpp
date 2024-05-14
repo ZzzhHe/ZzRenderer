@@ -1,8 +1,6 @@
 #include "Mesh.hpp"
 #include "GLDebug.hpp"
 
-#include <iostream>
-
 Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::shared_ptr<Material> material) 
     : m_material(material){
 

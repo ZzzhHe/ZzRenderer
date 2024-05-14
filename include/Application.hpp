@@ -13,11 +13,15 @@ public:
     ~Application();
     void run();
 
+    using model_id_t = uint32_t;
+    using model_map_t = std::unordered_map<model_id_t, std::shared_ptr<Model>>;
+
 private:
     void loadRenderObjects();
     void render();
 
 private:
     Window m_window{WIDTH, HEIGHT, "OpenGL"};
-    std::unordered_map<uint32_t, Model> m_models; // will be replaced by a scene graph(render object)
+    model_map_t m_models; // will be replaced by a scene graph(render object)
+    static model_id_t m_current_id;
 };

@@ -9,6 +9,7 @@ public:
     bool shouldClose() const;
     void swapBuffers();
     void pollEvents();
+    void clear() const;
 
     GLFWwindow *getGLFWWindow() const;
 

@@ -21,6 +21,7 @@ public:
         shader->use();
         for (size_t i = 0; i < textures.size(); i++) {
             textures[i]->bind(i);
+            shader->setInt("texture" + std::to_string(i + 1), i); // temporary
         }
     }
 

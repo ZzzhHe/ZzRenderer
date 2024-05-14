@@ -34,7 +34,7 @@ set(EXECUTABLE_OUTPUT_PATH "${CMAKE_SOURCE_DIR}/bin")
 add_definitions(-Wno-deprecated-declarations)
 
 # Check if the sanitizer option is enabled
-option(ENABLE_SANITIZER "Enable AddressSanitizer" ON)
+option(ENABLE_SANITIZER "Enable AddressSanitizer" OFF)
 
 if(ENABLE_SANITIZER)
     # Add flags for AddressSanitizer

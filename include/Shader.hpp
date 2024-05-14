@@ -16,7 +16,7 @@ struct ShaderProgramSource
 class Shader
 {
 public:
-    Shader(const std::string &filepath);
+    Shader(const std::string &vertpath, const std::string &fragpath);
     ~Shader();
 
     void use() const;
@@ -32,14 +32,15 @@ public:
     void setVec4(const std::string &name, glm::vec4 &value);
 
 private:
-    ShaderProgramSource ParseShader(const std::string &filepath);
+    ShaderProgramSource ParseShader(const std::string &vertpath, const std::string &fragpath);
     unsigned int CompileShader(unsigned int type, const std::string &source);
     GLuint CreateShader(const std::string &vertexShader, const std::string &fragmentShader);
 
     int GetUniformLocation(const std::string &name);
 
 private:
-    GLuint m_RendererID;
-    std::string m_FilePath;
-    std::unordered_map<std::string, int> m_UniformLocationCache;
+    GLuint m_rendererID;
+    std::string m_vertPath;
+    std::string m_fragPath;
+    std::unordered_map<std::string, int> m_uniformLocationCache;
 };
