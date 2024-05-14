@@ -7,10 +7,10 @@ public:
     IndexBuffer(const GLuint* data, GLuint count);
     ~IndexBuffer();
 
-    inline GLuint GetCount() const { return m_Count; }
+    inline GLuint getCount() const { return m_Count; }
 
-    void Bind() const;
-    void UnBind() const;
+    void bind() const;
+    void unBind() const;
 
 private:
     GLuint m_RendererID;

@@ -7,8 +7,8 @@ public:
     VertexBuffer(const void* data, GLuint size);
     ~VertexBuffer();
 
-    void Bind() const;
-    void UnBind() const;
+    void bind() const;
+    void unBind() const;
     
 private:
     GLuint m_RendererID;

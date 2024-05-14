@@ -8,9 +8,9 @@ public:
     VertexArray();
     ~VertexArray();
 
-    void AddBuffer(const VertexBuffer& vb, const VertexBufferLayout& layout);
-    void Bind() const;
-    void UnBind() const;
+    void addBuffer(const VertexBuffer& vb, const VertexBufferLayout& layout);
+    void bind() const;
+    void unBind() const;
 
 private:
     GLuint m_RendererID;
