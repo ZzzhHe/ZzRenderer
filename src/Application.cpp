@@ -1,4 +1,5 @@
-// TODO: add Light class, add Camera class
+// TODO: 1. add Light class, add Camera class
+// TODO: 2. set how manage the texture materials 
 
 #include "Application.hpp"
 
@@ -28,13 +29,16 @@ void Application::run() {
 
     SharedUniform uniform;
 
+    DirectLight light = {glm::vec3(1.0f, 2.0f, -1.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec4(1.0f, 1.0f, 1.0f, 0.3f)};
+
     while (!m_window.shouldClose()) {
         m_window.pollEvents();
         m_renderer.clearColor(0.8f, 0.8f, 0.8f, 1.0f);
         m_renderer.clear();
-        uniform = {modelMatrix, viewMatrix, projectionMatrix};
-        for (const auto& model : m_models) {
-            m_renderer.render(model.second, uniform); // TODO: set modelMatrix for each model?
+        uniform = {modelMatrix, viewMatrix, projectionMatrix, light};
+        for (const auto& kv : m_models) {
+            auto model = kv.second;
+            m_renderer.render(model, uniform); // TODO: set modelMatrix for each model?
         }
         m_window.swapBuffers();
     }
