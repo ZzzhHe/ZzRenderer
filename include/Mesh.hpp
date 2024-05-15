@@ -6,7 +6,6 @@
 
 #include "IndexBuffer.hpp"
 #include "VertexArray.hpp"
-
 #include "Material.hpp"
 
 struct Vertex{
@@ -23,7 +22,7 @@ public:
     Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::shared_ptr<Material> material);
     ~Mesh();
 
-    void render();
+    void render(const SharedUniform& uniform);
     void setMaterial(std::shared_ptr<Material> material);
     void setShader(std::shared_ptr<Shader> shader);
 

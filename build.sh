@@ -5,4 +5,4 @@ cmake ..
 make
 cd ..
 ./bin/ZzRenderer
-
+rm -rf bin

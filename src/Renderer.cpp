@@ -24,6 +24,6 @@ void Renderer::setViewport(int width, int height) {
     GLCall(glViewport(0, 0, width, height));
 }
 
-void Renderer::render(std::shared_ptr<Model> model) {
-    model->render();
+void Renderer::render(std::shared_ptr<Model> model, const SharedUniform& uniform) {
+    model->render(uniform);
 }

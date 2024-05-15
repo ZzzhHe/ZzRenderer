@@ -24,8 +24,8 @@ Mesh::~Mesh() {
     delete this->m_IBO;
 }
 
-void Mesh::render() {
-    m_material->apply();
+void Mesh::render(const SharedUniform& uniform) {
+    m_material->apply(uniform);
     this->m_VAO->bind();
     this->m_IBO->bind();
     GLCall(glDrawElements(GL_TRIANGLES, this->m_IBO->getCount(), GL_UNSIGNED_INT, nullptr));

@@ -5,9 +5,9 @@
 // static member initialization, must be done outside of the class
 Model::mesh_id_t Model::m_current_id = 0;
 
-void Model::render() const {
+void Model::render(const SharedUniform& uniform) const {
     for (auto &kv : m_meshes) {
-        kv.second->render();
+        kv.second->render(uniform);
     }
 }
 

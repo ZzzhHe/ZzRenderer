@@ -11,7 +11,7 @@ public:
 
     void setViewport(int width, int height);
 
-    void render(std::shared_ptr<Model> model);
+    void render(std::shared_ptr<Model> model, const SharedUniform& uniform);
 
 private:
     void setGlobalOpenGLState();
