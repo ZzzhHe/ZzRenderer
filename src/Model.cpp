@@ -78,7 +78,6 @@ void Model::processNode(aiNode *node, const aiScene *scene) {
 std::shared_ptr<Mesh> Model::processMesh(aiMesh *mesh, const aiScene *scene) {
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
-    std::vector<std::shared_ptr<Texture>> textures;
 
     for (unsigned int i = 0; i < mesh->mNumVertices; i ++) {
         Vertex v;
@@ -109,41 +108,45 @@ std::shared_ptr<Mesh> Model::processMesh(aiMesh *mesh, const aiScene *scene) {
         }
     }
 
+    std::shared_ptr<MaterialTextures> materialTextures = std::make_shared<class MaterialTextures>();
+	
+	materialTextures->diffuse = nullptr;
+	
     if (mesh->mMaterialIndex >= 0) {
         aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
-        std::vector<std::shared_ptr<Texture>> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, TextureType::DIFFUSE);
-        textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
-        std::vector<std::shared_ptr<Texture>> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, TextureType::SPECULAR);
-        textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
-        std::vector<std::shared_ptr<Texture>> emissionMaps = loadMaterialTextures(material, aiTextureType_EMISSIVE, TextureType::EMISSION);
-        textures.insert(textures.end(), emissionMaps.begin(), emissionMaps.end());
+        materialTextures->diffuse = loadMaterialTextures(material, aiTextureType_DIFFUSE, TextureType::DIFFUSE);
+		// cannot be nullptr?
+        materialTextures->specular = loadMaterialTextures(material, aiTextureType_SPECULAR, TextureType::SPECULAR);
+        materialTextures->normal = loadMaterialTextures(material, aiTextureType_EMISSIVE, TextureType::NORMAL);
     }
 
-    auto material = std::make_shared<Material>(textures);
+
+    auto material = std::make_shared<Material>(materialTextures);
+
     return std::make_shared<Mesh>(vertices, indices, material);
 }
 
-std::vector<std::shared_ptr<Texture>> Model::loadMaterialTextures(aiMaterial *material, aiTextureType type, TextureType typeName) {
-    std::vector<std::shared_ptr<Texture>> textures;
-    bool skip;
-    for (unsigned int i = 0; i < material->GetTextureCount(type); i ++) {
+std::shared_ptr<Texture> Model::loadMaterialTextures(aiMaterial *material, aiTextureType type, TextureType typeName) {
+    // TODO: right now we only load the first texture of each type
+    for (unsigned int i = 0; i < material->GetTextureCount(type); i++) {
         aiString str;
         material->GetTexture(type, i, &str);
-        skip = false;
-        for(unsigned int j = 0; j < m_loaded_textures.size(); j++) {
-            if(std::strcmp(m_loaded_textures[j]->getFilePath().data(), str.C_Str()) == 0) {
-                textures.push_back(m_loaded_textures[j]);
-                skip = true;
-                break;
+        std::string texturePath = str.C_Str();
+
+        // Check if texture is already loaded
+        for (auto& loadedTexture : m_loaded_textures) {
+            if (loadedTexture->getFilePath() == texturePath) {
+                return loadedTexture; // Return the existing texture if already loaded
             }
         }
-        if (!skip) {
-            auto texture = std::make_shared<Texture>(m_directory + "/" + str.C_Str(), typeName);
-            textures.push_back(texture);
-            m_loaded_textures.push_back(texture);
-        }
+
+        // If texture is not loaded, load it, store in the cache, and return it
+        auto texture = std::make_shared<Texture>(m_directory + "/" + texturePath, typeName);
+        m_loaded_textures.push_back(texture);
+        return texture; // Return the new texture after loading it
     }
-    return std::move(textures);
+
+    return nullptr; // Return nullptr if no textures are found
 }
 
 

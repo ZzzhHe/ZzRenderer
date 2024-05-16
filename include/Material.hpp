@@ -7,12 +7,24 @@
 #include <memory>
 #include <vector>
 
+struct MaterialTextures {
+    std::shared_ptr<Texture> diffuse;
+    std::shared_ptr<Texture> specular;
+    std::shared_ptr<Texture> normal;
+
+    bool operator==(const MaterialTextures& other) const {
+        return diffuse == other.diffuse 
+            && specular == other.specular 
+            && normal == other.normal;
+    }
+};
+
 class Material {
 public:
     std::shared_ptr<Shader> shader{};
-    std::vector<std::shared_ptr<Texture>> textures;
+    std::shared_ptr<MaterialTextures> textures;
 
-    Material(std::vector<std::shared_ptr<Texture>> textures) 
+    Material(const std::shared_ptr<MaterialTextures>& textures) 
         : textures(textures) {}
 
     void apply(const SharedUniform& uniformData) const {
@@ -26,10 +38,17 @@ public:
         shader->setVec3("directLight.direction", uniformData.light.direction);
         shader->setVec4("directLight.ambientColor", uniformData.light.ambientColor);
         shader->setVec4("directLight.color", uniformData.light.color);
-        for (size_t i = 0; i < textures.size(); i++) {
-            textures[i]->bind(i);
-            shader->setInt("texture" + std::to_string(i + 1), i); // temporary
+        if (textures->diffuse) {
+            shader->setInt("material.diffuse", 0);
+            textures->diffuse->bind(0);
+        }
+        if (textures->specular) {
+            shader->setInt("material.specular", 1);
+            textures->specular->bind(1);
+        }
+        if (textures->normal) {
+            shader->setInt("material.normal", 2);
+            textures->normal->bind(2);
         }
     }
-
 };

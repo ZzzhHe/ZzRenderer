@@ -5,7 +5,8 @@
 enum struct TextureType {
     DIFFUSE,
     SPECULAR,
-    EMISSION
+    EMISSION,
+    NORMAL
 };
 
 class Texture {

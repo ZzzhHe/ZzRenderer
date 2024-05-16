@@ -12,24 +12,29 @@ struct DirectLight {
     vec4 color;
 };
 
-uniform sampler2D texture1;
+struct Material {
+    sampler2D diffuse; 
+    sampler2D specular;
+    sampler2D normal;
+};
+
+uniform Material material;
 
 uniform DirectLight directLight;
 
-vec4 CalcDirectLight(DirectLight light, vec3 normal, vec3 viewDir, vec4 color);
+vec4 CalcDirectLight(DirectLight light, vec3 normal, vec3 viewDir);
 
 void main() {
-	
 	vec3 norm = normalize(Normal);
     vec3 viewPos = vec3(2.0f, -3.0f, -10.0f);
 	vec3 viewDir = normalize(viewPos - FragPos);
-    vec4 color = texture(texture1, TexCoords);
-    vec4 direct_light = CalcDirectLight(directLight, norm, viewDir, color);
+    vec4 direct_light = CalcDirectLight(directLight, norm, viewDir);
 	FragColor = direct_light;
 }
 
-vec4 CalcDirectLight(DirectLight light, vec3 normal, vec3 viewDir, vec4 color) {
-	float alpha = color.a;
+vec4 CalcDirectLight(DirectLight light, vec3 normal, vec3 viewDir) {
+	vec4 diffuseColor = texture(material.diffuse, TexCoords);
+	float alpha = diffuseColor.a;
 	
 	vec3 lightDirection = normalize(-light.direction);
 
@@ -48,7 +53,7 @@ vec4 CalcDirectLight(DirectLight light, vec3 normal, vec3 viewDir, vec4 color) {
 	vec3 specular = lightColor * spec;
 	
 	
-	vec3 outColor = ambient + (diffuse + specular) * vec3(color);
+	vec3 outColor = ambient + (diffuse + specular) * vec3(diffuseColor);
 		
 	return vec4(outColor, alpha);
 }
