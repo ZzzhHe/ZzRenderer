@@ -15,7 +15,7 @@ public:
 
     GLFWwindow *getGLFWWindow() const;
 	
-	void setCameraController(Camera& camera);
+	void setCameraController(CameraController* cameraController);
 	void processKeyboard(float deltaTime);
 
     static void framebufferSizeCallback(GLFWwindow *window, int width, int height);
@@ -35,5 +35,5 @@ private:
     int m_width, m_height;
     const char *m_title;
     GLFWwindow *m_window;
-	std::unique_ptr<CameraController> m_cameraController;
+	CameraController* m_cameraController;
 };

@@ -1,7 +1,9 @@
 #include "CameraController.hpp"
 
 void CameraController::processKeyboard(GLFWwindow* window, float deltaTime) {
-    if (m_camera) {
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+		glfwSetWindowShouldClose(window, true);
+	if (m_camera) {
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
             m_camera->processKeyboard(FORWARD, deltaTime);
         if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)

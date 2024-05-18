@@ -75,8 +75,9 @@ void Window::initGLAD() {
     }
 }
 
-void Window::setCameraController(Camera& camera) {
-	m_cameraController = std::make_unique<CameraController>(camera);
+void Window::setCameraController(CameraController* cameraController) {
+	m_cameraController = cameraController;
+	glfwSetWindowUserPointer(m_window, this);
 }
 
 void Window::framebufferSizeCallback(GLFWwindow* window, int width, int height) {
@@ -86,14 +87,14 @@ void Window::framebufferSizeCallback(GLFWwindow* window, int width, int height) 
 void Window::cursorPosCallback(GLFWwindow* window, double xpos, double ypos) {
 	// TODO: need to make sure the Camera Controller be the same,
 	// may true the queue system
-	Window* win = reinterpret_cast<Window*>(glfwGetWindowUserPointer(window));
+	Window* win = static_cast<Window*>(glfwGetWindowUserPointer(window));
 	if (win && win->m_cameraController) {
 		win->m_cameraController->processMouseMovement(static_cast<float>(xpos), static_cast<float>(ypos));
 	}
 }
 
 void Window::scrollCallback(GLFWwindow *window, double xoffset, double yoffset) {
-	Window* win = reinterpret_cast<Window*>(glfwGetWindowUserPointer(window));
+	Window* win = static_cast<Window*>(glfwGetWindowUserPointer(window));
 	if (win && win->m_cameraController) {
 		win->m_cameraController->processMouseScroll(static_cast<float>(yoffset));
 	}

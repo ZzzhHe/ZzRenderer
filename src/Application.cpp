@@ -22,8 +22,9 @@ void Application::run() {
     std::cout << "Running application..." << std::endl;
 	
 	Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+	CameraController cameraController(camera);
 	
-	m_window.setCameraController(camera);
+	m_window.setCameraController(&cameraController);
 	m_window.setupCallbacks();
 	m_window.setInputMode();
     
@@ -46,7 +47,7 @@ void Application::run() {
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
 
-        m_window.processKeyboard(deltaTime);
+        cameraController.processKeyboard(m_window.getGLFWWindow(), deltaTime);
 
         m_window.pollEvents();
         m_renderer.clearColor(0.8f, 0.8f, 0.8f, 1.0f);
