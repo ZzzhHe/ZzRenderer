@@ -3,13 +3,13 @@
 void CameraController::processKeyboard(GLFWwindow* window, float deltaTime) {
     if (m_camera) {
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-            m_camera->ProcessKeyboard(FORWARD, deltaTime);
+            m_camera->processKeyboard(FORWARD, deltaTime);
         if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-            m_camera->ProcessKeyboard(BACKWARD, deltaTime);
+            m_camera->processKeyboard(BACKWARD, deltaTime);
         if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-            m_camera->ProcessKeyboard(LEFT, deltaTime);
+            m_camera->processKeyboard(LEFT, deltaTime);
         if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-            m_camera->ProcessKeyboard(RIGHT, deltaTime);
+            m_camera->processKeyboard(RIGHT, deltaTime);
     }
 }
 
@@ -27,22 +27,14 @@ void CameraController::processMouseMovement(float xpos, float ypos) {
     m_lastY = ypos;
 
     if (m_camera) {
-        m_camera->ProcessMouseMovement(xoffset, yoffset);
+        m_camera->processMouseMovement(xoffset, yoffset);
     } else if (m_orbitCamera) {
-        m_orbitCamera->ProcessMouseMovement(xoffset, yoffset);
+        m_orbitCamera->processMouseMovement(xoffset, yoffset);
     }
 }
 
 void CameraController::processMouseScroll(float yoffset) {
     if (m_orbitCamera) {
-        m_orbitCamera->ProcessMouseScroll(yoffset);
+        m_orbitCamera->processMouseScroll(yoffset);
     }
-}
-
-void CameraController::mouse_callback(GLFWwindow* window, double xpos, double ypos) {
-    processMouseMovement(xpos, ypos);
-}
-
-void CameraController::scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
-    processMouseScroll(yoffset);
 }

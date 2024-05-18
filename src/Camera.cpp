@@ -1,6 +1,6 @@
 #include "Camera.hpp"
 
-void Camera::ProcessKeyboard(Camera_Movement direction, float deltaTime) {
+void Camera::processKeyboard(Camera_Movement direction, float deltaTime) {
     float velocity = MovementSpeed * deltaTime;
     if (direction == FORWARD)
         Position += Front * velocity;
@@ -13,20 +13,17 @@ void Camera::ProcessKeyboard(Camera_Movement direction, float deltaTime) {
 }
 
     // Processes input received from a mouse input system
-void Camera::ProcessMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch = true) {
+void Camera::processMouseMovement(float xoffset, float yoffset) {
     xoffset *= MouseSensitivity;
     yoffset *= MouseSensitivity;
 
     Yaw += xoffset;
     Pitch += yoffset;
-
-    // Make sure that when pitch is out of bounds, screen doesn't get flipped
-    if (constrainPitch) {
-        if (Pitch > 89.0f)
-            Pitch = 89.0f;
-        if (Pitch < -89.0f)
-            Pitch = -89.0f;
-    }
+	
+	if (Pitch > 89.0f)
+		Pitch = 89.0f;
+	if (Pitch < -89.0f)
+		Pitch = -89.0f;
 
     // Update Front, Right and Up Vectors using the updated Euler angles
     updateCameraVectors();
@@ -44,7 +41,7 @@ void Camera::updateCameraVectors() {
     Up = glm::normalize(glm::cross(Right, Front));
 }
 
-void OrbitCamera::ProcessMouseMovement(float xoffset, float yoffset) {
+void OrbitCamera::processMouseMovement(float xoffset, float yoffset) {
     xoffset *= MouseSensitivity;
     yoffset *= MouseSensitivity;
 
@@ -58,13 +55,13 @@ void OrbitCamera::ProcessMouseMovement(float xoffset, float yoffset) {
         Pitch = -89.0f;
 }
 
-void OrbitCamera::ProcessMouseScroll(float yoffset) {
+void OrbitCamera::processMouseScroll(float yoffset) {
     Distance -= yoffset * ZoomSensitivity;
     if (Distance < 1.0f)
         Distance = 1.0f;
 }
 
-glm::vec3 OrbitCamera::CalculatePosition() const{
+glm::vec3 OrbitCamera::calculatePosition() const{
     glm::vec3 position;
     position.x = Target.x + Distance * cos(glm::radians(Pitch)) * cos(glm::radians(Yaw));
     position.y = Target.y + Distance * sin(glm::radians(Pitch));

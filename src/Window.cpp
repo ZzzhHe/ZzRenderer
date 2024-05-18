@@ -16,8 +16,6 @@ Window::Window(int width, int height, const char* title)
     createWindow();
 
     glfwMakeContextCurrent(m_window);
-    glfwSetFramebufferSizeCallback(m_window, framebufferSizeCallback);
-    glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 
     initGLAD();
 }
@@ -77,6 +75,40 @@ void Window::initGLAD() {
     }
 }
 
+void Window::setCameraController(Camera& camera) {
+	m_cameraController = std::make_unique<CameraController>(camera);
+}
+
 void Window::framebufferSizeCallback(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, width, height);
+}
+
+void Window::cursorPosCallback(GLFWwindow* window, double xpos, double ypos) {
+	// TODO: need to make sure the Camera Controller be the same,
+	// may true the queue system
+	Window* win = reinterpret_cast<Window*>(glfwGetWindowUserPointer(window));
+	if (win && win->m_cameraController) {
+		win->m_cameraController->processMouseMovement(static_cast<float>(xpos), static_cast<float>(ypos));
+	}
+}
+
+void Window::scrollCallback(GLFWwindow *window, double xoffset, double yoffset) {
+	Window* win = reinterpret_cast<Window*>(glfwGetWindowUserPointer(window));
+	if (win && win->m_cameraController) {
+		win->m_cameraController->processMouseScroll(static_cast<float>(yoffset));
+	}
+}
+
+void Window::setupCallbacks() {
+	glfwSetFramebufferSizeCallback(m_window, Window::framebufferSizeCallback);
+	glfwSetCursorPosCallback(m_window, Window::cursorPosCallback);
+	glfwSetScrollCallback(m_window, Window::scrollCallback);
+}
+
+void Window::setInputMode() {
+	glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+}
+
+void Window::processKeyboard(float deltaTime) {
+	m_cameraController->processKeyboard(m_window, deltaTime);
 }

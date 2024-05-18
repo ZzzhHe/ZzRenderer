@@ -9,9 +9,6 @@
 
 #include <iostream>
 
-Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
-CameraController cameraController(camera);
-
 Application::model_id_t Application::m_current_id = 0;
 
 Application::Application() {
@@ -19,26 +16,17 @@ Application::Application() {
 }
 
 Application::~Application() {
-}   
-
-// Callback function for mouse movement
-void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
-    cameraController.processMouseMovement(static_cast<float>(xpos), static_cast<float>(ypos));
-}
-
-// Callback function for mouse scroll
-void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
-    cameraController.processMouseScroll(static_cast<float>(yoffset));
 }
 
 void Application::run() {
     std::cout << "Running application..." << std::endl;
+	
+	Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+	
+	m_window.setCameraController(camera);
+	m_window.setupCallbacks();
+	m_window.setInputMode();
     
-
-    glfwSetCursorPosCallback(m_window.getGLFWWindow(), mouse_callback);
-    glfwSetScrollCallback(m_window.getGLFWWindow(), scroll_callback); // Remove parentheses here
-    glfwSetInputMode(m_window.getGLFWWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
     loadRenderObjects();
     
     auto shader = std::make_shared<Shader>("shader/simple.vert", "shader/simple.frag");
@@ -58,7 +46,7 @@ void Application::run() {
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
 
-        cameraController.processKeyboard(m_window.getGLFWWindow(), deltaTime);
+        m_window.processKeyboard(deltaTime);
 
         m_window.pollEvents();
         m_renderer.clearColor(0.8f, 0.8f, 0.8f, 1.0f);

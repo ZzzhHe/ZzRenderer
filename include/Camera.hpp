@@ -44,9 +44,9 @@ public:
         updateCameraVectors();
     }
 
-    void ProcessKeyboard(Camera_Movement direction, float deltaTime);
+    void processKeyboard(Camera_Movement direction, float deltaTime);
 
-    void ProcessMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch = true);
+    void processMouseMovement(float xoffset, float yoffset);
 
     glm::mat4 GetViewMatrix() {
         return glm::lookAt(Position, Position + Front, Up);
@@ -73,19 +73,19 @@ public:
     OrbitCamera(glm::vec3 target = glm::vec3(0.0f), float distance = 5.0f, float yaw = -90.0f, float pitch = 0.0f)
         : Target(target), Distance(distance), Yaw(yaw), Pitch(pitch), MouseSensitivity(0.1f), ZoomSensitivity(0.1f) {}
 
-    glm::mat4 GetViewMatrix() const {
-        glm::vec3 position = CalculatePosition();
+    glm::mat4 getViewMatrix() const {
+        glm::vec3 position = calculatePosition();
         return glm::lookAt(position, Target, glm::vec3(0.0f, 1.0f, 0.0f));
     }
 
-    glm::mat4 GetProjectionMatrix(float aspectRatio, float fov = 45.0f, float nearClip = 0.1f, float farClip = 100.0f) const {
+    glm::mat4 getProjectionMatrix(float aspectRatio, float fov = 45.0f, float nearClip = 0.1f, float farClip = 100.0f) const {
         return glm::perspective(glm::radians(fov), aspectRatio, nearClip, farClip);
     }
 
-    void ProcessMouseMovement(float xoffset, float yoffset);
+    void processMouseMovement(float xoffset, float yoffset);
 
-    void ProcessMouseScroll(float yoffset);
+    void processMouseScroll(float yoffset);
 
 private:
-    glm::vec3 CalculatePosition() const;
+    glm::vec3 calculatePosition() const;
 };
