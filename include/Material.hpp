@@ -38,6 +38,7 @@ public:
         shader->setVec3("directLight.direction", uniformData.light.direction);
         shader->setVec4("directLight.ambientColor", uniformData.light.ambientColor);
         shader->setVec4("directLight.color", uniformData.light.color);
+		shader->setVec3("viewPos", uniformData.viewPos);
         if (textures->diffuse) {
             shader->setInt("material.diffuse", 0);
             textures->diffuse->bind(0);

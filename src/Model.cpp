@@ -117,7 +117,7 @@ std::shared_ptr<Mesh> Model::processMesh(aiMesh *mesh, const aiScene *scene) {
         materialTextures->diffuse = loadMaterialTextures(material, aiTextureType_DIFFUSE, TextureType::DIFFUSE);
 		// cannot be nullptr?
         materialTextures->specular = loadMaterialTextures(material, aiTextureType_SPECULAR, TextureType::SPECULAR);
-        materialTextures->normal = loadMaterialTextures(material, aiTextureType_EMISSIVE, TextureType::NORMAL);
+        materialTextures->normal = loadMaterialTextures(material, aiTextureType_NORMALS, TextureType::NORMAL);
     }
 
 

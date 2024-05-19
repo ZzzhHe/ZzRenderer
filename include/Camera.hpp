@@ -47,11 +47,15 @@ public:
     void processKeyboard(Camera_Movement direction, float deltaTime);
 
     void processMouseMovement(float xoffset, float yoffset);
+	
+	glm::vec3 getCameraPos() const {
+		return Position;
+	}
 
-    glm::mat4 GetViewMatrix() {
+    glm::mat4 getViewMatrix() {
         return glm::lookAt(Position, Position + Front, Up);
     }
-    glm::mat4 GetProjectionMatrix(float aspectRatio) {
+    glm::mat4 getProjectionMatrix(float aspectRatio) {
         return glm::perspective(glm::radians(Zoom), aspectRatio, 0.1f, 100.0f);
     }
 
@@ -70,9 +74,13 @@ public:
     float MouseSensitivity; 
     float ZoomSensitivity;  
 
-    OrbitCamera(glm::vec3 target = glm::vec3(0.0f), float distance = 5.0f, float yaw = -90.0f, float pitch = 0.0f)
+    OrbitCamera(glm::vec3 target = glm::vec3(0.0f), float distance = 15.0f, float yaw = 50.0f, float pitch = 0.0f)
         : Target(target), Distance(distance), Yaw(yaw), Pitch(pitch), MouseSensitivity(0.1f), ZoomSensitivity(0.1f) {}
 
+	glm::vec3 getCameraPos() const {
+		return calculatePosition();
+	}
+	
     glm::mat4 getViewMatrix() const {
         glm::vec3 position = calculatePosition();
         return glm::lookAt(position, Target, glm::vec3(0.0f, 1.0f, 0.0f));

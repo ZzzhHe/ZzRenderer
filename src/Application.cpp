@@ -1,6 +1,3 @@
-// TODO: 1. add Light class, add Camera class
-// TODO: 2. set how manage the texture materials 
-
 #include "Application.hpp"
 #include "CameraController.hpp"
 
@@ -21,7 +18,8 @@ Application::~Application() {
 void Application::run() {
     std::cout << "Running application..." << std::endl;
 	
-	Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+//	Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+	OrbitCamera camera;
 	CameraController cameraController(camera);
 	
 	m_window.setCameraController(&cameraController);
@@ -38,7 +36,7 @@ void Application::run() {
     
     SharedUniform uniform;
 
-    DirectLight light = {glm::vec3(1.0f, 2.0f, -1.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec4(1.0f, 1.0f, 1.0f, 0.3f)};
+    DirectLight light = {glm::vec3(5.0f, -5.0f, 0.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec4(1.0f, 1.0f, 1.0f, 0.2f)}; // TODO: y and -y axis?
     
     float deltaTime = 0.0f;
     float lastFrame = 0.0f;
@@ -50,13 +48,13 @@ void Application::run() {
         cameraController.processKeyboard(m_window.getGLFWWindow(), deltaTime);
 
         m_window.pollEvents();
-        m_renderer.clearColor(0.8f, 0.8f, 0.8f, 1.0f);
+        m_renderer.clearColor(0.80f, 0.94f, 1.0f, 1.0f);
         m_renderer.clear();
 
-        glm::mat4 viewMatrix = camera.GetViewMatrix();
-        glm::mat4 projectionMatrix = camera.GetProjectionMatrix(static_cast<float>(Application::WIDTH) / Application::HEIGHT);
+		glm::mat4 viewMatrix = camera.getViewMatrix();
+		glm::mat4 projectionMatrix = camera.getProjectionMatrix(static_cast<float>(Application::WIDTH) / Application::HEIGHT);
 
-        uniform = {modelMatrix, viewMatrix, projectionMatrix, light};
+        uniform = {modelMatrix, viewMatrix, projectionMatrix, light, camera.getCameraPos()};
         for (const auto& kv : m_models) {
             auto model = kv.second;
             m_renderer.render(model, uniform); // TODO: set modelMatrix for each model?
@@ -66,7 +64,8 @@ void Application::run() {
 }
 
 void Application::loadRenderObjects() {
-    auto model = std::make_shared<Model>("models/grass_cube/Grass_Block.obj");
+    auto model = std::make_shared<Model>("models/nuka_cup/nuka_cup.obj");
+//	auto model = std::make_shared<Model>("models/grass_cube/Grass_Block.obj");
     m_models.emplace(m_current_id, model);
     m_current_id++;
 }
