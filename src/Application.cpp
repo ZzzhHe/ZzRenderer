@@ -31,12 +31,12 @@ void Application::run() {
     auto shader = std::make_shared<Shader>("shader/simple.vert", "shader/simple.frag");
     m_models[m_current_id - 1]->setShader(shader); // TODO: set shader for each mesh?
 
-
     glm::mat4 modelMatrix = glm::mat4(1.0f);
+//	modelMatrix = glm::scale(modelMatrix, glm::vec3(0.05f));
     
     SharedUniform uniform;
 
-    DirectLight light = {glm::vec3(5.0f, -5.0f, 0.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec4(1.0f, 1.0f, 1.0f, 0.2f)}; // TODO: y and -y axis?
+    DirectLight light = {glm::vec3(5.0f, -5.0f, 0.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec4(1.0f, 1.0f, 1.0f, 0.3f)}; // TODO: y and -y axis?
     
     float deltaTime = 0.0f;
     float lastFrame = 0.0f;
@@ -48,7 +48,8 @@ void Application::run() {
         cameraController.processKeyboard(m_window.getGLFWWindow(), deltaTime);
 
         m_window.pollEvents();
-        m_renderer.clearColor(0.80f, 0.94f, 1.0f, 1.0f);
+//        m_renderer.clearColor(0.80f, 0.94f, 1.0f, 1.0f);
+		m_renderer.clearColor(0.47f, 0.53f, 0.6f, 1.0f);
         m_renderer.clear();
 
 		glm::mat4 viewMatrix = camera.getViewMatrix();
@@ -64,6 +65,7 @@ void Application::run() {
 }
 
 void Application::loadRenderObjects() {
+//	auto model = std::make_shared<Model>("models/yellow_car/Pony_cartoon.obj");
     auto model = std::make_shared<Model>("models/nuka_cup/nuka_cup.obj");
 //	auto model = std::make_shared<Model>("models/grass_cube/Grass_Block.obj");
     m_models.emplace(m_current_id, model);
