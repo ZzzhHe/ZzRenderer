@@ -31,13 +31,21 @@ public:
         if (shader == nullptr) {
             throw std::runtime_error("Shader is nullptr");
         }
-        shader->use();
-        shader->setMat4("model", uniformData.model);
-        shader->setMat4("view", uniformData.view);
-        shader->setMat4("projection", uniformData.projection);
-        shader->setVec3("directLight.direction", uniformData.light.direction);
-        shader->setVec4("directLight.ambientColor", uniformData.light.ambientColor);
-        shader->setVec4("directLight.color", uniformData.light.color);
+		shader->use();
+		shader->setMat4("model", uniformData.model);
+		shader->setMat4("view", uniformData.view);
+		shader->setMat4("projection", uniformData.projection);
+		
+		shader->setVec3("pointLight.direction", uniformData.light.position);
+		shader->setVec4("pointLight.ambientColor", uniformData.light.ambientColor);
+		shader->setVec4("pointLight.color", uniformData.light.color);
+		shader->setFloat("pointLight.constant", uniformData.light.constant);
+		shader->setFloat("pointLight.linear", uniformData.light.linear);
+		shader->setFloat("pointLight.quadratic", uniformData.light.quadratic);
+		
+//        shader->setVec3("directLight.direction", uniformData.light.direction);
+//        shader->setVec4("directLight.ambientColor", uniformData.light.ambientColor);
+//        shader->setVec4("directLight.color", uniformData.light.color);
 		shader->setVec3("viewPos", uniformData.viewPos);
         if (textures->diffuse) {
             shader->setInt("material.diffuse", 0);

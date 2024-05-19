@@ -35,8 +35,10 @@ void Application::run() {
 //	modelMatrix = glm::scale(modelMatrix, glm::vec3(0.05f));
     
     SharedUniform uniform;
+	
+//	DirectLight directLight = {glm::vec3(5.0f, -5.0f, 0.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec4(1.0f, 1.0f, 1.0f, 0.3f)}; // TODO: y and -y axis?
 
-    DirectLight light = {glm::vec3(5.0f, -5.0f, 0.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec4(1.0f, 1.0f, 1.0f, 0.3f)}; // TODO: y and -y axis?
+    PointLight pointLight = {glm::vec3(10.0f, 10.0f, 0.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec4(1.0f, 1.0f, 1.0f, 0.3f)}; // TODO: y and -y axis?
     
     float deltaTime = 0.0f;
     float lastFrame = 0.0f;
@@ -54,8 +56,9 @@ void Application::run() {
 
 		glm::mat4 viewMatrix = camera.getViewMatrix();
 		glm::mat4 projectionMatrix = camera.getProjectionMatrix(static_cast<float>(Application::WIDTH) / Application::HEIGHT);
-
-        uniform = {modelMatrix, viewMatrix, projectionMatrix, light, camera.getCameraPos()};
+		
+		
+        uniform = {modelMatrix, viewMatrix, projectionMatrix, pointLight, camera.getCameraPos()};
         for (const auto& kv : m_models) {
             auto model = kv.second;
             m_renderer.render(model, uniform); // TODO: set modelMatrix for each model?
