@@ -75,7 +75,7 @@ void Window::initGLAD() {
     }
 }
 
-void Window::setCameraController(CameraController* cameraController) {
+void Window::setCameraController(std::weak_ptr<CameraController> cameraController ) {
 	m_cameraController = cameraController;
 	glfwSetWindowUserPointer(m_window, this);
 }
@@ -88,16 +88,31 @@ void Window::cursorPosCallback(GLFWwindow* window, double xpos, double ypos) {
 	// TODO: need to make sure the Camera Controller be the same,
 	// may true the queue system
 	Window* win = static_cast<Window*>(glfwGetWindowUserPointer(window));
-	if (win && win->m_cameraController) {
-		win->m_cameraController->processMouseMovement(static_cast<float>(xpos), static_cast<float>(ypos));
+	
+	if (!win) {
+		throw std::runtime_error("Window pointer is null!");
 	}
+	
+	auto cameraControllerSharedPtr = win->m_cameraController.lock();
+	if (!cameraControllerSharedPtr) {
+		throw std::runtime_error("CameraController is not available");
+	}
+	cameraControllerSharedPtr->processMouseMovement(static_cast<float>(xpos), static_cast<float>(ypos));
 }
 
 void Window::scrollCallback(GLFWwindow *window, double xoffset, double yoffset) {
 	Window* win = static_cast<Window*>(glfwGetWindowUserPointer(window));
-	if (win && win->m_cameraController) {
-		win->m_cameraController->processMouseScroll(static_cast<float>(yoffset));
+	
+	if (!win) {
+		throw std::runtime_error("Window pointer is null!");
 	}
+	
+	auto cameraControllerSharedPtr = win->m_cameraController.lock();
+	if (!cameraControllerSharedPtr) {
+		throw std::runtime_error("CameraController is not available");
+	}
+	
+	cameraControllerSharedPtr->processMouseScroll(static_cast<float>(yoffset));
 }
 
 void Window::setupCallbacks() {
@@ -107,9 +122,32 @@ void Window::setupCallbacks() {
 }
 
 void Window::setInputMode() {
-	glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 }
 
 void Window::processKeyboard(float deltaTime) {
-	m_cameraController->processKeyboard(m_window, deltaTime);
+	if (glfwGetKey(m_window, GLFW_KEY_ESCAPE) == GLFW_PRESS){
+		glfwSetWindowShouldClose(m_window, true);
+	}
+	if (glfwGetKey(m_window, GLFW_KEY_G) == GLFW_PRESS) {
+		toggleGuiMode();
+	}
+	
+	auto cameraControllerSharedPtr = m_cameraController.lock();
+	
+	if (!cameraControllerSharedPtr) {
+		throw std::runtime_error("CameraController is not available");
+	}
+	
+	cameraControllerSharedPtr->processKeyboard(m_window, deltaTime);
+}
+
+void Window::toggleGuiMode() {
+	m_guiMode = !m_guiMode;
+
+	if (m_guiMode) {
+		glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+	} else {
+		glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	}
 }

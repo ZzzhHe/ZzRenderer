@@ -1,18 +1,22 @@
 #include "CameraController.hpp"
 
+#include <stdexcept>
+
 void CameraController::processKeyboard(GLFWwindow* window, float deltaTime) {
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-		glfwSetWindowShouldClose(window, true);
-	if (m_camera) {
-        if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-            m_camera->processKeyboard(FORWARD, deltaTime);
-        if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-            m_camera->processKeyboard(BACKWARD, deltaTime);
-        if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-            m_camera->processKeyboard(LEFT, deltaTime);
-        if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-            m_camera->processKeyboard(RIGHT, deltaTime);
-    }
+	auto cameraSharedPtr = m_camera.lock();
+	if (!cameraSharedPtr) {
+		throw std::runtime_error("Camera is no longer available.");
+	}
+	if (auto* camera = dynamic_cast<MoveCamera*>(cameraSharedPtr.get())) {
+		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+			camera->processKeyboard(FORWARD, deltaTime);
+		if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+			camera->processKeyboard(BACKWARD, deltaTime);
+		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+			camera->processKeyboard(LEFT, deltaTime);
+		if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+			camera->processKeyboard(RIGHT, deltaTime);
+	}
 }
 
 void CameraController::processMouseMovement(float xpos, float ypos) {
@@ -27,16 +31,26 @@ void CameraController::processMouseMovement(float xpos, float ypos) {
 
     m_lastX = xpos;
     m_lastY = ypos;
+		
+	auto cameraSharedPtr = m_camera.lock();
+	if (!cameraSharedPtr) {
+		throw std::runtime_error("Camera is no longer available.");
+	}
 
-    if (m_camera) {
-        m_camera->processMouseMovement(xoffset, yoffset);
-    } else if (m_orbitCamera) {
-        m_orbitCamera->processMouseMovement(xoffset, yoffset);
+    if (auto* camera = dynamic_cast<MoveCamera*>(cameraSharedPtr.get())) {
+		camera->processMouseMovement(xoffset, yoffset);
+    } else if (auto* camera = dynamic_cast<OrbitCamera*>(cameraSharedPtr.get())) {
+		camera->processMouseMovement(xoffset, yoffset);
     }
 }
 
 void CameraController::processMouseScroll(float yoffset) {
-    if (m_orbitCamera) {
-        m_orbitCamera->processMouseScroll(yoffset);
+	auto cameraSharedPtr = m_camera.lock();
+	if (!cameraSharedPtr) {
+		throw std::runtime_error("Camera is no longer available.");
+	}
+		
+    if (auto* camera = dynamic_cast<OrbitCamera*>(cameraSharedPtr.get())) {
+		camera->processMouseScroll(yoffset);
     }
 }

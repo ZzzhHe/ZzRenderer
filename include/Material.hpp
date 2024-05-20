@@ -36,16 +36,17 @@ public:
 		shader->setMat4("view", uniformData.view);
 		shader->setMat4("projection", uniformData.projection);
 		
-		shader->setVec3("pointLight.direction", uniformData.light.position);
-		shader->setVec4("pointLight.ambientColor", uniformData.light.ambientColor);
-		shader->setVec4("pointLight.color", uniformData.light.color);
-		shader->setFloat("pointLight.constant", uniformData.light.constant);
-		shader->setFloat("pointLight.linear", uniformData.light.linear);
-		shader->setFloat("pointLight.quadratic", uniformData.light.quadratic);
+		shader->setVec3("directLight.direction", uniformData.directLight.direction);
+		shader->setVec4("directLight.ambientColor", uniformData.directLight.ambientColor);
+		shader->setVec4("directLight.color", uniformData.directLight.color);
 		
-//        shader->setVec3("directLight.direction", uniformData.light.direction);
-//        shader->setVec4("directLight.ambientColor", uniformData.light.ambientColor);
-//        shader->setVec4("directLight.color", uniformData.light.color);
+		shader->setVec3("pointLight.position", uniformData.pointLight.position);
+		shader->setVec4("pointLight.ambientColor", uniformData.pointLight.ambientColor);
+		shader->setVec4("pointLight.color", uniformData.pointLight.color);
+		shader->setFloat("pointLight.constant", uniformData.pointLight.constant);
+		shader->setFloat("pointLight.linear", uniformData.pointLight.linear);
+		shader->setFloat("pointLight.quadratic", uniformData.pointLight.quadratic);
+		
 		shader->setVec3("viewPos", uniformData.viewPos);
         if (textures->diffuse) {
             shader->setInt("material.diffuse", 0);

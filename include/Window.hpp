@@ -15,8 +15,9 @@ public:
 
     GLFWwindow *getGLFWWindow() const;
 	
-	void setCameraController(CameraController* cameraController);
+	void setCameraController(std::weak_ptr<CameraController> cameraController);
 	void processKeyboard(float deltaTime);
+	void toggleGuiMode();
 
     static void framebufferSizeCallback(GLFWwindow *window, int width, int height);
 	static void cursorPosCallback(GLFWwindow *window, double xpos, double ypos);
@@ -35,5 +36,7 @@ private:
     int m_width, m_height;
     const char *m_title;
     GLFWwindow *m_window;
-	CameraController* m_cameraController;
+	std::weak_ptr<CameraController> m_cameraController;
+	
+	bool m_guiMode = false;
 };

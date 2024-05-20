@@ -1,6 +1,6 @@
 #include "Camera.hpp"
 
-void Camera::processKeyboard(Camera_Movement direction, float deltaTime) {
+void MoveCamera::processKeyboard(Camera_Movement direction, float deltaTime) {
     float velocity = MovementSpeed * deltaTime;
     if (direction == FORWARD)
         Position += Front * velocity;
@@ -13,7 +13,7 @@ void Camera::processKeyboard(Camera_Movement direction, float deltaTime) {
 }
 
     // Processes input received from a mouse input system
-void Camera::processMouseMovement(float xoffset, float yoffset) {
+void MoveCamera::processMouseMovement(float xoffset, float yoffset) {
     xoffset *= MouseSensitivity;
     yoffset *= MouseSensitivity;
 
@@ -29,7 +29,7 @@ void Camera::processMouseMovement(float xoffset, float yoffset) {
     updateCameraVectors();
 }
 
-void Camera::updateCameraVectors() {
+void MoveCamera::updateCameraVectors() {
     // Calculate the new Front vector
     glm::vec3 front;
     front.x = cos(glm::radians(Yaw)) * cos(glm::radians(Pitch));

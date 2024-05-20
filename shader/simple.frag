@@ -36,20 +36,13 @@ uniform vec3 viewPos;
 
 vec4 CalcDirectLight(DirectLight light, vec3 normal, vec3 viewDir);
 vec4 CalcPointLight(PointLight light, vec3 normal, vec3 viewDir);
-vec4 VisualizeLightDirection(vec3 lightDir);
 
 void main() {
 	vec3 norm = normalize(Normal);
 	vec3 viewDir = normalize(viewPos - FragPos);
-//    vec4 direct_light_color = CalcDirectLight(directLight, norm, viewDir);
-//	vec4 direct_point_color = CalcPointLight(pointLight, norm, viewDir);
-//	FragColor = direct_point_color;
-	vec3 lightDir = normalize(pointLight.position - FragPos);
-	FragColor = VisualizeLightDirection(lightDir);
-}
-
-vec4 VisualizeLightDirection(vec3 lightDir) {
-	return vec4(abs(lightDir), 1.0);
+    vec4 direct_light_color = CalcDirectLight(directLight, norm, viewDir);
+	vec4 point_light_color = CalcPointLight(pointLight, norm, viewDir);
+	FragColor = direct_light_color + point_light_color;
 }
 
 vec4 CalcDirectLight(DirectLight light, vec3 normal, vec3 viewDir) {
@@ -101,8 +94,6 @@ vec4 CalcPointLight(PointLight light, vec3 normal, vec3 viewDir) {
 	
 	float distance = length(light.position - FragPos);
 	float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
-	
-	
 	
 	vec3 outColor = (ambient + (diffuse + specular) * lightColor) * attenuation;
 		

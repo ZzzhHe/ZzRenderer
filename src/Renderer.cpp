@@ -18,6 +18,7 @@ void Renderer::clear() {
 void Renderer::setGlobalOpenGLState() {
     GLCall(glEnable(GL_DEPTH_TEST));
     GLCall(glDepthFunc(GL_LESS));
+	GLCall(glEnable(GL_FRAMEBUFFER_SRGB)); // gamma correction
 }
 
 void Renderer::setViewport(int width, int height) {

@@ -18,8 +18,15 @@ const float SPEED = 2.5f;
 const float SENSITIVITY = 0.1f;
 const float ZOOM = 45.0f;
 
-// Camera class for FPS-like controls
 class Camera {
+public:
+	virtual glm::vec3 getCameraPos() const {return glm::vec3(0.0f);};
+	virtual glm::mat4 getViewMatrix() const {return glm::mat4(1.0f);};
+	virtual glm::mat4 getProjectionMatrix(float aspectRatio) const {return glm::mat4(1.0f);};
+};
+
+// Camera class for FPS-like controls
+class MoveCamera : public Camera{
 public:
     // Camera attributes
     glm::vec3 Position;
@@ -38,8 +45,8 @@ public:
     float Zoom;
 
     // Constructor with vectors
-    Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), float yaw = YAW, float pitch = PITCH)
-        : Position(position), WorldUp(up), Front(glm::vec3(0.0f, 0.0f, -1.0f)), Yaw(yaw), 
+	MoveCamera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), float yaw = YAW, float pitch = PITCH)
+        : Position(position), WorldUp(up), Front(glm::vec3(0.0f, 0.0f, -1.0f)), Yaw(yaw),
             Pitch(pitch), MovementSpeed(SPEED), MouseSensitivity(SENSITIVITY), Zoom(ZOOM) {
         updateCameraVectors();
     }
@@ -48,14 +55,14 @@ public:
 
     void processMouseMovement(float xoffset, float yoffset);
 	
-	glm::vec3 getCameraPos() const {
+	glm::vec3 getCameraPos() const override{
 		return Position;
 	}
 
-    glm::mat4 getViewMatrix() {
+    glm::mat4 getViewMatrix() const override{
         return glm::lookAt(Position, Position + Front, Up);
     }
-    glm::mat4 getProjectionMatrix(float aspectRatio) {
+    glm::mat4 getProjectionMatrix(float aspectRatio) const override{
         return glm::perspective(glm::radians(Zoom), aspectRatio, 0.1f, 100.0f);
     }
 
@@ -65,7 +72,7 @@ private:
 };
 
 // OrbitCamera class for orbit controls around a target
-class OrbitCamera {
+class OrbitCamera : public Camera{
 public:
     glm::vec3 Target;       
     float Distance;         
@@ -77,17 +84,17 @@ public:
     OrbitCamera(glm::vec3 target = glm::vec3(0.0f), float distance = 15.0f, float yaw = 50.0f, float pitch = 0.0f)
         : Target(target), Distance(distance), Yaw(yaw), Pitch(pitch), MouseSensitivity(0.1f), ZoomSensitivity(0.1f) {}
 
-	glm::vec3 getCameraPos() const {
+	glm::vec3 getCameraPos() const override {
 		return calculatePosition();
 	}
 	
-    glm::mat4 getViewMatrix() const {
+    glm::mat4 getViewMatrix() const override {
         glm::vec3 position = calculatePosition();
         return glm::lookAt(position, Target, glm::vec3(0.0f, 1.0f, 0.0f));
     }
 
-    glm::mat4 getProjectionMatrix(float aspectRatio, float fov = 45.0f, float nearClip = 0.1f, float farClip = 100.0f) const {
-        return glm::perspective(glm::radians(fov), aspectRatio, nearClip, farClip);
+    glm::mat4 getProjectionMatrix(float aspectRatio) const override{
+        return glm::perspective(glm::radians(45.0f), aspectRatio, 0.1f, 100.0f);
     }
 
     void processMouseMovement(float xoffset, float yoffset);
