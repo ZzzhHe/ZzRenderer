@@ -3,6 +3,8 @@
 #include "Model.hpp"
 #include "Window.hpp"
 #include "Renderer.hpp"
+#include "Gui.hpp"
+
 #include <unordered_map>
 #include <memory>
 
@@ -20,11 +22,11 @@ public:
 
 private:
     void loadRenderObjects();
-	void renderImGui();
 
 private:
     Window m_window{WIDTH, HEIGHT, "OpenGL"};
     Renderer m_renderer{};
+    Gui m_gui{m_window};
 	
 	std::shared_ptr<Camera> m_camera;
 	std::shared_ptr<CameraController> m_cameraController;
