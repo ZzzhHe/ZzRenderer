@@ -19,6 +19,7 @@ void Renderer::setGlobalOpenGLState() {
     GLCall(glEnable(GL_DEPTH_TEST));
     GLCall(glDepthFunc(GL_LESS));
 	GLCall(glEnable(GL_FRAMEBUFFER_SRGB)); // gamma correction
+    GLCall(glEnable(GL_CULL_FACE)); // backface culling
 }
 
 void Renderer::setViewport(int width, int height) {
