@@ -2,10 +2,11 @@
 
 #include "Texture.hpp"
 #include "GLDebug.hpp"
-#include <iostream>
-
 #include "stb_image/stb_image.h"
+
 #include <cassert>
+#include <vector>
+#include <iostream>
 
 
 Texture::Texture(const std::string& path, const TextureType type)
@@ -80,6 +81,11 @@ Texture::~Texture() {
 }
 
 void Texture::bind(const unsigned int slot) const {
+	if (m_Type == TextureType::CUBE_MAP) {
+		GLCall(glActiveTexture(GL_TEXTURE0 + slot));
+		GLCall(glBindTexture(GL_TEXTURE_CUBE_MAP, m_RendererID));
+		return;
+	}
     GLCall(glActiveTexture(GL_TEXTURE0 + slot));
     GLCall(glBindTexture(GL_TEXTURE_2D, m_RendererID));
 }

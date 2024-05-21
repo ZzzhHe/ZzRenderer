@@ -16,17 +16,29 @@ Application::model_id_t Application::m_current_id = 0;
 Application::Application() {
     std::cout << "Creating application..." << std::endl;
 	
-	loadRenderObjects();
-	
-	// set Camera
+	// Camera
 	m_camera = std::make_shared<OrbitCamera>();
 	m_cameraController = std::make_shared<CameraController>(m_camera);
 	
+	// shader
 	m_shader = std::make_shared<Shader>("shader/simple.vert", "shader/simple.frag");
 	m_skyboxShader = std::make_shared<Shader>("shader/skybox.vert", "shader/skybox.frag");	
 
+	// model and skybox
+	loadRenderObjects();
 	m_models[m_current_id - 1]->setShader(m_shader); // TODO: set shader for each mesh?
 	
+	std::vector<std::string> skybox_faces = {
+		"models/skybox/right.jpg",
+		"models/skybox/left.jpg",
+		"models/skybox/top.jpg",
+		"models/skybox/bottom.jpg",
+		"models/skybox/front.jpg",
+		"models/skybox/back.jpg"
+	};
+	m_skybox = std::make_shared<Skybox>(skybox_faces, m_skyboxShader);
+	
+	// window callback
 	m_window.setCameraController(m_cameraController); // TODO: unique_ptr to point
 	m_window.setupCallbacks();
 	m_window.setInputMode();
@@ -48,16 +60,6 @@ void Application::run() {
 	glm::mat4 viewMatrix = glm::mat4(1.0f);
 	glm::mat4 projectionMatrix = glm::mat4(1.0f);
 
-	std::vector<std::string> skybox_faces = {
-		"model/skybox/right.jpg",
-		"model/skybox/left.jpg",
-		"model/skybox/top.jpg",
-		"model/skybox/bottom.jpg",
-		"model/skybox/front.jpg",
-		"model/skybox/back.jpg"
-	};
-
-	Skybox skybox(skybox_faces, m_skyboxShader);
     
     float deltaTime = 0.0f;
     float lastFrame = 0.0f;
@@ -67,7 +69,7 @@ void Application::run() {
         lastFrame = currentFrame;
 
         m_window.pollEvents();
-		
+
 		m_gui.newFrame();
 		GuiData guiData = {directLight, pointLight};
 		m_gui.updateGUI(guiData);
@@ -76,7 +78,6 @@ void Application::run() {
 
 		m_renderer.clearColor(0.47f, 0.53f, 0.6f, 1.0f);
         m_renderer.clear();
-		m_renderer.setDepthFunc(GL_LESS);
 
 		viewMatrix = m_camera->getViewMatrix();
 		projectionMatrix = m_camera->getProjectionMatrix(static_cast<float>(Application::WIDTH) / Application::HEIGHT);
@@ -86,8 +87,10 @@ void Application::run() {
             auto model = kv.second;
             m_renderer.render(model, m_uniform); // TODO: set modelMatrix for each model?
         }
-
-		skybox.render(viewMatrix, projectionMatrix);
+		
+		m_renderer.setDepthFunc(GL_LEQUAL);
+		m_skybox->render(viewMatrix, projectionMatrix);
+		m_renderer.setDepthFunc(GL_LESS);
 		
 		m_gui.render();
 		

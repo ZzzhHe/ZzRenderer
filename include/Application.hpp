@@ -4,6 +4,7 @@
 #include "Window.hpp"
 #include "Renderer.hpp"
 #include "Gui.hpp"
+#include "Skybox.hpp"
 
 #include <unordered_map>
 #include <memory>
@@ -35,6 +36,8 @@ private:
 	
 	std::shared_ptr<Shader> m_shader;
 	std::shared_ptr<Shader> m_skyboxShader;
+	
+	std::shared_ptr<Skybox> m_skybox;
     
     model_map_t m_models; // will be replaced by a scene graph(render object)
     static model_id_t m_current_id;
