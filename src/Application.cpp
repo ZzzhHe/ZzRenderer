@@ -1,4 +1,3 @@
-// TODO: Normal MAP
 #include "Application.hpp"
 #include "CameraController.hpp"
 
