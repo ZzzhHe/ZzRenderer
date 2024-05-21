@@ -14,6 +14,8 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std:
     layout.push<float>(3); // Position
     layout.push<float>(2); // TexCoords
     layout.push<float>(3); // Normal
+	layout.push<float>(3); // Tangent
+	layout.push<float>(3); // Bitangent
 
     this->m_VAO->addBuffer(*this->m_VBO, layout);
 }
