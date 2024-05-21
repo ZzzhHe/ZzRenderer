@@ -5,6 +5,7 @@
 #include <iostream>
 
 #include "stb_image/stb_image.h"
+#include <cassert>
 
 
 Texture::Texture(const std::string& path, const TextureType type)
@@ -40,6 +41,38 @@ Texture::Texture(const std::string& path, const TextureType type)
     if (m_LocalBuffer) {
         stbi_image_free(m_LocalBuffer);
     }
+}
+
+Texture::Texture(const std::vector<std::string>& paths, TextureType type)
+    : m_RendererID(0), m_Type(type), m_Width(0), m_Height(0), m_BPP(0) {
+    assert(type == TextureType::CUBE_MAP);
+    GLCall(glGenTextures(1, &m_RendererID));
+    GLCall(glBindTexture(GL_TEXTURE_CUBE_MAP, m_RendererID));
+
+    for (unsigned int i = 0; i < paths.size(); i++) {
+        unsigned char* data = stbi_load(paths[i].c_str(), &m_Width, &m_Height, &m_BPP, 0);
+        if (data) {
+            GLCall(glTexImage2D(
+                GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 
+                0, 
+                GL_RGB, 
+                m_Width, 
+                m_Height, 
+                0, 
+                GL_RGB, 
+                GL_UNSIGNED_BYTE, 
+                data));
+            stbi_image_free(data);
+        } else {
+            std::cout << "Failed to load cube map texture at path: " << paths[i] << std::endl;
+        }
+    }
+    GLCall(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
+    GLCall(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+    GLCall(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
+    GLCall(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
+    GLCall(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE));
+    GLCall(glBindTexture(GL_TEXTURE_CUBE_MAP, 0));
 }
 
 Texture::~Texture() {

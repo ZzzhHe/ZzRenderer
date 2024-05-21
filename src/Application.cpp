@@ -1,5 +1,6 @@
 #include "Application.hpp"
 #include "CameraController.hpp"
+#include "Skybox.hpp"
 
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_glfw.h"
@@ -22,6 +23,8 @@ Application::Application() {
 	m_cameraController = std::make_shared<CameraController>(m_camera);
 	
 	m_shader = std::make_shared<Shader>("shader/simple.vert", "shader/simple.frag");
+	m_skyboxShader = std::make_shared<Shader>("shader/skybox.vert", "shader/skybox.frag");	
+
 	m_models[m_current_id - 1]->setShader(m_shader); // TODO: set shader for each mesh?
 	
 	m_window.setCameraController(m_cameraController); // TODO: unique_ptr to point
@@ -44,6 +47,17 @@ void Application::run() {
 //	modelMatrix = glm::scale(modelMatrix, glm::vec3(0.05f));
 	glm::mat4 viewMatrix = glm::mat4(1.0f);
 	glm::mat4 projectionMatrix = glm::mat4(1.0f);
+
+	std::vector<std::string> skybox_faces = {
+		"model/skybox/right.jpg",
+		"model/skybox/left.jpg",
+		"model/skybox/top.jpg",
+		"model/skybox/bottom.jpg",
+		"model/skybox/front.jpg",
+		"model/skybox/back.jpg"
+	};
+
+	Skybox skybox(skybox_faces, m_skyboxShader);
     
     float deltaTime = 0.0f;
     float lastFrame = 0.0f;
@@ -72,6 +86,8 @@ void Application::run() {
             auto model = kv.second;
             m_renderer.render(model, m_uniform); // TODO: set modelMatrix for each model?
         }
+
+		skybox.render(viewMatrix, projectionMatrix);
 		
 		m_gui.render();
 		

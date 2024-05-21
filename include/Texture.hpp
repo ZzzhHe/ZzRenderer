@@ -6,11 +6,13 @@ enum struct TextureType {
     DIFFUSE,
     SPECULAR,
     EMISSION,
-    NORMAL
+    NORMAL,
+    CUBE_MAP,
 };
 
 class Texture {
 public:
+    Texture(const std::vector<std::string>& paths, TextureType type); // for cube maps
     Texture(const std::string& path, const TextureType type);
     ~Texture();
 

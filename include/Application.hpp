@@ -34,7 +34,8 @@ private:
 	SharedUniform m_uniform;
 	
 	std::shared_ptr<Shader> m_shader;
-	
+	std::shared_ptr<Shader> m_skyboxShader;
+    
     model_map_t m_models; // will be replaced by a scene graph(render object)
     static model_id_t m_current_id;
 };

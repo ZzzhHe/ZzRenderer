@@ -93,7 +93,7 @@ vec4 CalcPointLight(PointLight light, vec3 normal, vec3 viewDir) {
 	
 	// specular
 	vec3 halfwayDir = normalize(lightDirection + viewDir);
-	float spec = pow(max(dot(normal, halfwayDir), 0.0), 32.0f);
+	float spec = pow(max(dot(normal, halfwayDir), 0.0), 16.0f);
 	vec3 specular = spec * vec3(specularColor);
 	
 	float distance = length(light.position - fs_in.FragPos);
