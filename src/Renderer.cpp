@@ -17,13 +17,16 @@ void Renderer::clear() {
 
 void Renderer::setGlobalOpenGLState() {
     GLCall(glEnable(GL_DEPTH_TEST));
-    GLCall(glDepthFunc(GL_LESS));
 	GLCall(glEnable(GL_FRAMEBUFFER_SRGB)); // gamma correction
     GLCall(glEnable(GL_CULL_FACE)); // backface culling
 }
 
 void Renderer::setViewport(int width, int height) {
     GLCall(glViewport(0, 0, width, height));
+}
+
+void Renderer::setDepthFunc(const GLenum func) {
+    GLCall(glDepthFunc(func));
 }
 
 void Renderer::render(std::shared_ptr<Model> model, const SharedUniform& uniform) {

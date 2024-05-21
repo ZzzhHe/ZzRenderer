@@ -11,6 +11,8 @@ public:
 
     void setViewport(int width, int height);
 
+    void setDepthFunc(const GLenum func);
+
     void render(std::shared_ptr<Model> model, const SharedUniform& uniform);
 
 private:
