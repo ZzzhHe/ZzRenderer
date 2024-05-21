@@ -9,6 +9,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+#include <vector>
 #include <iostream>
 
 Application::model_id_t Application::m_current_id = 0;
@@ -29,12 +30,12 @@ Application::Application() {
 	m_models[m_current_id - 1]->setShader(m_shader); // TODO: set shader for each mesh?
 	
 	std::vector<std::string> skybox_faces = {
-		"models/skybox/right.jpg",
-		"models/skybox/left.jpg",
-		"models/skybox/top.jpg",
-		"models/skybox/bottom.jpg",
-		"models/skybox/front.jpg",
-		"models/skybox/back.jpg"
+		"resource/skybox/iceberg/right.jpg",
+		"resource/skybox/iceberg/left.jpg",
+		"resource/skybox/iceberg/top.jpg",
+		"resource/skybox/iceberg/bottom.jpg",
+		"resource/skybox/iceberg/front.jpg",
+		"resource/skybox/iceberg/back.jpg"
 	};
 	m_skybox = std::make_shared<Skybox>(skybox_faces, m_skyboxShader);
 	
@@ -99,9 +100,9 @@ void Application::run() {
 }
 
 void Application::loadRenderObjects() {
-//	auto model = std::make_shared<Model>("models/yellow_car/Pony_cartoon.obj");
-    auto model = std::make_shared<Model>("models/nuka_cup/nuka_cup.obj");
-//	auto model = std::make_shared<Model>("models/grass_cube/Grass_Block.obj");
+//	auto model = std::make_shared<Model>("resource/model/yellow_car/Pony_cartoon.obj");
+    auto model = std::make_shared<Model>("resource/model/nuka_cup/nuka_cup.obj");
+//	auto model = std::make_shared<Model>("resource/model/grass_cube/Grass_Block.obj");
     m_models.emplace(m_current_id, model);
     m_current_id++;
 }
