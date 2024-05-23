@@ -7,7 +7,9 @@ public:
     ~Renderer();
 
     void clearColor(float r, float g, float b, float a);
-    void clear();
+    void clear(const GLenum mask);
+    void enable(const GLenum cap);
+    void disable(const GLenum cap);
 
     void setViewport(int width, int height);
 

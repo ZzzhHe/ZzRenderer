@@ -6,14 +6,15 @@
 #include "Gui.hpp"
 #include "Skybox.hpp"
 #include "Ubo.hpp"
+#include "FrameBuffer.hpp"
 
 #include <unordered_map>
 #include <memory>
 
 class Application {
 public:
-    static const int WIDTH = 800;
-    static const int HEIGHT = 600;
+    static const int WIDTH;
+    static const int HEIGHT;
 
     Application();
     ~Application();
@@ -36,11 +37,12 @@ private:
 	SharedUniform m_uniform;
     std::unordered_map<std::string, std::shared_ptr<Ubo>> m_ubos;
 	
-	std::shared_ptr<Shader> m_shader;
-	std::shared_ptr<Shader> m_skyboxShader;
+    std::unordered_map<std::string, std::shared_ptr<Shader>> m_shaders;
 	
 	std::shared_ptr<Skybox> m_skybox;
     
     model_map_t m_models; // will be replaced by a scene graph(render object)
     static model_id_t m_current_id;
+
+    std::unordered_map<std::string, std::shared_ptr<Framebuffer>> m_framebuffers;
 };

@@ -76,6 +76,20 @@ Texture::Texture(const std::vector<std::string>& paths, TextureType type)
     GLCall(glBindTexture(GL_TEXTURE_CUBE_MAP, 0));
 }
 
+Texture::Texture(const unsigned int width, const unsigned int height, TextureType type)
+    : m_RendererID(0), m_Type(type), m_Width(width), m_Height(height), m_BPP(0) {
+    assert(type == TextureType::FRAMEBUFFER);
+    GLCall(glGenTextures(1, &m_RendererID));
+    GLCall(glBindTexture(GL_TEXTURE_2D, m_RendererID));
+
+    GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, m_Width, m_Height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL));
+
+    GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
+    GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)); 
+    
+    GLCall(glBindTexture(GL_TEXTURE_2D, 0));
+}
+
 Texture::~Texture() {
     GLCall(glDeleteTextures(1, &m_RendererID));
 }
@@ -92,4 +106,9 @@ void Texture::bind(const unsigned int slot) const {
 
 void Texture::unBind() const {
     GLCall(glBindTexture(GL_TEXTURE_2D, 0));
+}
+
+void Texture::bindTextureWithId(const GLuint id, const unsigned int slot) {
+    GLCall(glActiveTexture(GL_TEXTURE0 + slot));
+    GLCall(glBindTexture(GL_TEXTURE_2D, id));
 }

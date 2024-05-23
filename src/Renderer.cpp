@@ -11,8 +11,8 @@ void Renderer::clearColor(float r, float g, float b, float a) {
     GLCall(glClearColor(r, g, b, a));
 }
 
-void Renderer::clear() {
-    GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+void Renderer::clear(const GLenum mask) {
+    GLCall(glClear(mask));
 }
 
 void Renderer::setGlobalOpenGLState() {
@@ -32,4 +32,12 @@ void Renderer::setDepthFunc(const GLenum func) {
 
 void Renderer::render(std::shared_ptr<Model> model, const SharedUniform& uniform) {
     model->render(uniform);
+}
+
+void Renderer::enable(const GLenum cap) {
+    GLCall(glEnable(cap));
+}
+
+void Renderer::disable(const GLenum cap) {
+    GLCall(glDisable(cap));
 }

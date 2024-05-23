@@ -8,12 +8,15 @@ enum struct TextureType {
     EMISSION,
     NORMAL,
     CUBE_MAP,
+    FRAMEBUFFER,
 };
 
 class Texture {
 public:
     Texture(const std::vector<std::string>& paths, TextureType type); // for cube maps
     Texture(const std::string& path, const TextureType type);
+    Texture(const unsigned int width, const unsigned int height, const TextureType type);
+
     ~Texture();
 
     void bind(const unsigned int slot = 0) const;
@@ -21,9 +24,11 @@ public:
 
     inline int getWidth() const { return m_Width; }
     inline int getHeight() const { return m_Height; }
-
+    inline GLuint id() const { return m_RendererID; }
     inline std::string getFilePath() const { return m_FilePath; }
     inline TextureType getType() const { return m_Type; }
+
+    static void bindTextureWithId(const GLuint id, const unsigned int slot = 0);
 
 private:
     GLuint m_RendererID;

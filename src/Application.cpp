@@ -13,6 +13,9 @@
 #include <string>
 #include <iostream>
 
+const int Application::WIDTH = 800;
+const int Application::HEIGHT = 600;
+
 Application::model_id_t Application::m_current_id = 0;
 
 Application::Application() {
@@ -23,18 +26,19 @@ Application::Application() {
 	m_cameraController = std::make_shared<CameraController>(m_camera);
 	
 	// shader
-	m_shader = std::make_shared<Shader>("shader/simple.vert", "shader/simple.frag");
-	m_skyboxShader = std::make_shared<Shader>("shader/skybox.vert", "shader/skybox.frag");	
+	m_shaders["simple"] = std::make_shared<Shader>("shader/simple.vert", "shader/simple.frag");
+	m_shaders["skybox"] = std::make_shared<Shader>("shader/skybox.vert", "shader/skybox.frag");
+	m_shaders["kernel"] = std::make_shared<Shader>("shader/kernel.vert", "shader/kernel.frag");
 
 
 	// uniform buffer objects
 	m_ubos["UboCamera"] = std::make_shared<Ubo>("UboCamera", sizeof(UboCamera));
-	m_ubos["UboCamera"]->uniformBlockBindingPoint(*m_shader, 0);
+	m_ubos["UboCamera"]->uniformBlockBindingPoint(*m_shaders["simple"], 0);
 	m_ubos["UboCamera"]->bindBufferToBindingPoint(0);
 
 	// model and skybox
 	loadRenderObjects();
-	m_models[m_current_id - 1]->setShader(m_shader); // TODO: set shader for each mesh?
+	m_models[m_current_id - 1]->setShader(m_shaders["simple"]); // TODO: set shader for each mesh?
 	
 	std::vector<std::string> skybox_faces = {
 		"resource/skybox/iceberg/right.jpg",
@@ -44,13 +48,21 @@ Application::Application() {
 		"resource/skybox/iceberg/front.jpg",
 		"resource/skybox/iceberg/back.jpg"
 	};
-	m_skybox = std::make_shared<Skybox>(skybox_faces, m_skyboxShader);
+	m_skybox = std::make_shared<Skybox>(skybox_faces, m_shaders["skybox"]);
 	
 	// window callback
 	m_window.setCameraController(m_cameraController); // TODO: unique_ptr to point
 	m_window.setupCallbacks();
 	m_window.setInputMode();
-	
+
+	// Framebuffer
+	m_framebuffers["KernalEffect"] = std::make_shared<Framebuffer>(WIDTH, HEIGHT, "KernelEffectTexture");
+	m_framebuffers["KernalEffect"]->setShader(m_shaders["kernel"]);
+	m_framebuffers["KernalEffect"]->attachTexture();
+	if (!m_framebuffers["KernalEffect"]->checkStatus()) {
+		throw std::runtime_error("Framebuffer is not complete!");
+	}
+	// m_framebuffers["KernalEffect"]->apply();
 }
 
 Application::~Application() {
@@ -84,8 +96,6 @@ void Application::run() {
 		
 		m_window.processKeyboard(deltaTime);
 
-		m_renderer.clearColor(0.47f, 0.53f, 0.6f, 1.0f);
-        m_renderer.clear();
 
 		viewMatrix = m_camera->getViewMatrix();
 		projectionMatrix = m_camera->getProjectionMatrix(static_cast<float>(Application::WIDTH) / Application::HEIGHT);
@@ -96,6 +106,13 @@ void Application::run() {
 		m_ubos["UboCamera"]->flush();
 
         m_uniform = {modelMatrix, directLight, pointLight};
+
+		m_framebuffers["KernalEffect"]->bind();
+		m_renderer.enable(GL_DEPTH_TEST);
+
+		m_renderer.clearColor(0.47f, 0.53f, 0.6f, 1.0f);
+        m_renderer.clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
         for (const auto& kv : m_models) {
             auto model = kv.second;
             m_renderer.render(model, m_uniform); // TODO: set modelMatrix for each model?
@@ -104,7 +121,15 @@ void Application::run() {
 		m_renderer.setDepthFunc(GL_LEQUAL);
 		m_skybox->render(viewMatrix, projectionMatrix);
 		m_renderer.setDepthFunc(GL_LESS);
-		
+
+		m_framebuffers["KernalEffect"]->unbind();
+		m_renderer.disable(GL_DEPTH_TEST);
+
+		m_renderer.clearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		m_renderer.clear(GL_COLOR_BUFFER_BIT);
+
+		m_framebuffers["KernalEffect"]->render();
+
 		m_gui.render();
 		
         m_window.swapBuffers();
