@@ -2,7 +2,7 @@
 
 #include "Shader.hpp"
 #include "Texture.hpp"
-#include "utils.hpp"
+#include "Data.hpp"
 
 #include <memory>
 #include <vector>
@@ -33,8 +33,6 @@ public:
         }
 		shader->use();
 		shader->setMat4("model", uniformData.model);
-		shader->setMat4("view", uniformData.view);
-		shader->setMat4("projection", uniformData.projection);
 		
 		shader->setVec3("directLight.direction", uniformData.directLight.direction);
 		shader->setVec4("directLight.ambientColor", uniformData.directLight.ambientColor);
@@ -46,8 +44,7 @@ public:
 		shader->setFloat("pointLight.constant", uniformData.pointLight.constant);
 		shader->setFloat("pointLight.linear", uniformData.pointLight.linear);
 		shader->setFloat("pointLight.quadratic", uniformData.pointLight.quadratic);
-		
-		shader->setVec3("viewPos", uniformData.viewPos);
+
         if (textures->diffuse) {
             shader->setInt("material.diffuse", 0);
             textures->diffuse->bind(0);

@@ -34,7 +34,11 @@ uniform Material material;
 uniform DirectLight directLight;
 uniform PointLight pointLight;
 
-uniform vec3 viewPos;
+layout (std140) uniform UboCamera {
+    mat4 view;
+    mat4 projection;
+    vec3 viewPos;
+};
 
 vec4 CalcDirectLight(DirectLight light, vec3 normal, vec3 viewDir);
 vec4 CalcPointLight(PointLight light, vec3 normal, vec3 viewDir);

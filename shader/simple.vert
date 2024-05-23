@@ -12,10 +12,13 @@ out VS_OUT {
     mat3 TBN;
 } vs_out;
 
+layout (std140) uniform UboCamera {
+    mat4 view;
+    mat4 projection;
+    vec3 viewPos;
+};
 
 uniform mat4 model;
-uniform mat4 view;
-uniform mat4 projection;
 
 void main() {
     gl_Position = projection * view * model * vec4(aPos, 1.0);

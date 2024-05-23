@@ -5,6 +5,7 @@
 #include "Renderer.hpp"
 #include "Gui.hpp"
 #include "Skybox.hpp"
+#include "Ubo.hpp"
 
 #include <unordered_map>
 #include <memory>
@@ -33,6 +34,7 @@ private:
 	std::shared_ptr<CameraController> m_cameraController;
 	
 	SharedUniform m_uniform;
+    std::unordered_map<std::string, std::shared_ptr<Ubo>> m_ubos;
 	
 	std::shared_ptr<Shader> m_shader;
 	std::shared_ptr<Shader> m_skyboxShader;

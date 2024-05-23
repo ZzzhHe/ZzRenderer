@@ -19,6 +19,8 @@ public:
     Shader(const std::string &vertpath, const std::string &fragpath);
     ~Shader();
 
+    GLuint id() const { return m_rendererID; }
+
     void use() const;
     void unUse() const;
 

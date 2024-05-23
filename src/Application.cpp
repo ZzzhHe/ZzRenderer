@@ -10,6 +10,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include <vector>
+#include <string>
 #include <iostream>
 
 Application::model_id_t Application::m_current_id = 0;
@@ -24,6 +25,12 @@ Application::Application() {
 	// shader
 	m_shader = std::make_shared<Shader>("shader/simple.vert", "shader/simple.frag");
 	m_skyboxShader = std::make_shared<Shader>("shader/skybox.vert", "shader/skybox.frag");	
+
+
+	// uniform buffer objects
+	m_ubos["UboCamera"] = std::make_shared<Ubo>("UboCamera", sizeof(UboCamera));
+	m_ubos["UboCamera"]->uniformBlockBindingPoint(*m_shader, 0);
+	m_ubos["UboCamera"]->bindBufferToBindingPoint(0);
 
 	// model and skybox
 	loadRenderObjects();
@@ -83,7 +90,12 @@ void Application::run() {
 		viewMatrix = m_camera->getViewMatrix();
 		projectionMatrix = m_camera->getProjectionMatrix(static_cast<float>(Application::WIDTH) / Application::HEIGHT);
 		
-        m_uniform = {modelMatrix, viewMatrix, projectionMatrix, directLight, pointLight, m_camera->getCameraPos()};
+		m_ubos["UboCamera"]->addData(viewMatrix);
+		m_ubos["UboCamera"]->addData(projectionMatrix);
+		m_ubos["UboCamera"]->addData(m_camera->getCameraPos());
+		m_ubos["UboCamera"]->flush();
+
+        m_uniform = {modelMatrix, directLight, pointLight};
         for (const auto& kv : m_models) {
             auto model = kv.second;
             m_renderer.render(model, m_uniform); // TODO: set modelMatrix for each model?
