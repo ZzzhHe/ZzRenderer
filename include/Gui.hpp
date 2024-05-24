@@ -6,6 +6,8 @@
 struct GuiData{
     DirectLight& directLight;
     PointLight& pointLight;
+    const std::vector<std::string>& framebufferType;
+    std::string& currentFramebuffer;
 };
 
 class Gui{

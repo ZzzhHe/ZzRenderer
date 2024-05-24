@@ -1,5 +1,7 @@
 #include "Gui.hpp"
 
+#include <vector>
+
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
@@ -67,6 +69,28 @@ void Gui::updateGUI(GuiData& guiData) {
         ImGui::SliderFloat("Ambient Intensity", &guiData.pointLight.ambientColor.w, 0.0f, 1.0f, "%.2f");
             
         ImGui::TreePop();
+    }
+
+    ImGui::CollapsingHeader("Post-processing");
+
+        // Create a C-style array of strings for ImGui
+    std::vector<const char*> items;
+    for (const auto& name : guiData.framebufferType) {
+        items.push_back(name.c_str());
+    }
+
+    // Variable to store the selected index
+    static int selectedIndex = 0;
+    // Find the index of the current framebuffer
+    auto it = std::find(guiData.framebufferType.begin(), guiData.framebufferType.end(), guiData.currentFramebuffer);
+    if (it != guiData.framebufferType.end()) {
+        selectedIndex = std::distance(guiData.framebufferType.begin(), it);
+    }
+
+    // Create a combo box
+    if (ImGui::Combo("Effect", &selectedIndex, items.data(), items.size())) {
+        // Update the current framebuffer based on user selection
+        guiData.currentFramebuffer = guiData.framebufferType[selectedIndex];
     }
 
     ImGui::End();

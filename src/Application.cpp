@@ -1,6 +1,7 @@
 #include "Application.hpp"
 #include "CameraController.hpp"
 #include "Skybox.hpp"
+#include "utils.hpp"
 
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_glfw.h"
@@ -26,19 +27,19 @@ Application::Application() {
 	m_cameraController = std::make_shared<CameraController>(m_camera);
 	
 	// shader
-	m_shaders["simple"] = std::make_shared<Shader>("shader/simple.vert", "shader/simple.frag");
+	m_shaders["main"] = std::make_shared<Shader>("shader/main.vert", "shader/main.frag");
 	m_shaders["skybox"] = std::make_shared<Shader>("shader/skybox.vert", "shader/skybox.frag");
 	m_shaders["kernel"] = std::make_shared<Shader>("shader/kernel.vert", "shader/kernel.frag");
-
+	m_shaders["passthrough"] = std::make_shared<Shader>("shader/passthrough.vert", "shader/passthrough.frag");
 
 	// uniform buffer objects
 	m_ubos["UboCamera"] = std::make_shared<Ubo>("UboCamera", sizeof(UboCamera));
-	m_ubos["UboCamera"]->uniformBlockBindingPoint(*m_shaders["simple"], 0);
+	m_ubos["UboCamera"]->uniformBlockBindingPoint(*m_shaders["main"], 0);
 	m_ubos["UboCamera"]->bindBufferToBindingPoint(0);
 
 	// model and skybox
 	loadRenderObjects();
-	m_models[m_current_id - 1]->setShader(m_shaders["simple"]); // TODO: set shader for each mesh?
+	m_models[m_current_id - 1]->setShader(m_shaders["main"]); // TODO: set shader for each mesh?
 	
 	std::vector<std::string> skybox_faces = {
 		"resource/skybox/iceberg/right.jpg",
@@ -65,7 +66,17 @@ Application::Application() {
 		throw std::runtime_error("Framebuffer is not complete!");
 	}
 	m_framebuffers["KernalEffect"]->unbind();
-	// m_framebuffers["KernalEffect"]->apply();
+
+		// Framebuffer
+	m_framebuffers["PassThrough"] = std::make_shared<Framebuffer>(WIDTH * 2, HEIGHT * 2, "PassThroughTexture");
+	m_framebuffers["PassThrough"]->setShader(m_shaders["passthrough"]);
+	m_framebuffers["PassThrough"]->bind();
+	m_framebuffers["PassThrough"]->attachTexture();
+	m_framebuffers["PassThrough"]->attachRenderBuffer();
+	if (!m_framebuffers["PassThrough"]->checkStatus()) {
+		throw std::runtime_error("Framebuffer is not complete!");
+	}
+	m_framebuffers["PassThrough"]->unbind();
 }
 
 Application::~Application() {
@@ -83,6 +94,8 @@ void Application::run() {
 	glm::mat4 viewMatrix = glm::mat4(1.0f);
 	glm::mat4 projectionMatrix = glm::mat4(1.0f);
 
+	std::string currentFramebuffer = "PassThrough";
+
     
     float deltaTime = 0.0f;
     float lastFrame = 0.0f;
@@ -92,7 +105,7 @@ void Application::run() {
         lastFrame = currentFrame;
 
 		m_gui.newFrame();
-		GuiData guiData = {directLight, pointLight};
+		GuiData guiData = {directLight, pointLight, getKeys(m_framebuffers), currentFramebuffer};
 		m_gui.updateGUI(guiData);
 		
 		m_window.processKeyboard(deltaTime);
@@ -108,7 +121,7 @@ void Application::run() {
 
         m_uniform = {modelMatrix, directLight, pointLight};
 
-		m_framebuffers["KernalEffect"]->bind();
+		m_framebuffers[currentFramebuffer]->bind();
 		
 		m_renderer.enable(GL_DEPTH_TEST);
 		m_renderer.clearColor(0.47f, 0.53f, 0.6f, 1.0f);
@@ -123,13 +136,13 @@ void Application::run() {
 		m_skybox->render(viewMatrix, projectionMatrix);
 		m_renderer.setDepthFunc(GL_LESS);
 
-		m_framebuffers["KernalEffect"]->unbind();
+		m_framebuffers[currentFramebuffer]->unbind();
 		
 		m_renderer.disable(GL_DEPTH_TEST);
 		m_renderer.clearColor(1.0f, 1.0f, 1.0f, 1.0f);
 		m_renderer.clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		m_framebuffers["KernalEffect"]->render();
+		m_framebuffers[currentFramebuffer]->render();
 
 		m_gui.render();
 		
