@@ -27,7 +27,8 @@ private:
     GLuint m_fbo;
     VertexArray *m_VAO;
     VertexBuffer *m_VBO;
-    GLuint m_texture_id;
+	GLuint m_rbo;
+	std::shared_ptr<Texture> m_texture;
     unsigned int m_width, m_height;
     std::shared_ptr<Shader> m_shader;
     const std::string m_name;

@@ -86,8 +86,6 @@ Texture::Texture(const unsigned int width, const unsigned int height, TextureTyp
 
     GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
     GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)); 
-    
-    GLCall(glBindTexture(GL_TEXTURE_2D, 0));
 }
 
 Texture::~Texture() {
@@ -106,9 +104,4 @@ void Texture::bind(const unsigned int slot) const {
 
 void Texture::unBind() const {
     GLCall(glBindTexture(GL_TEXTURE_2D, 0));
-}
-
-void Texture::bindTextureWithId(const GLuint id, const unsigned int slot) {
-    GLCall(glActiveTexture(GL_TEXTURE0 + slot));
-    GLCall(glBindTexture(GL_TEXTURE_2D, id));
 }

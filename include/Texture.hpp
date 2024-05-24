@@ -28,8 +28,6 @@ public:
     inline std::string getFilePath() const { return m_FilePath; }
     inline TextureType getType() const { return m_Type; }
 
-    static void bindTextureWithId(const GLuint id, const unsigned int slot = 0);
-
 private:
     GLuint m_RendererID;
     const std::string m_FilePath;

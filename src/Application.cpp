@@ -56,12 +56,15 @@ Application::Application() {
 	m_window.setInputMode();
 
 	// Framebuffer
-	m_framebuffers["KernalEffect"] = std::make_shared<Framebuffer>(WIDTH, HEIGHT, "KernelEffectTexture");
+	m_framebuffers["KernalEffect"] = std::make_shared<Framebuffer>(WIDTH * 2, HEIGHT * 2, "KernelEffectTexture");
 	m_framebuffers["KernalEffect"]->setShader(m_shaders["kernel"]);
+	m_framebuffers["KernalEffect"]->bind();
 	m_framebuffers["KernalEffect"]->attachTexture();
+	m_framebuffers["KernalEffect"]->attachRenderBuffer();
 	if (!m_framebuffers["KernalEffect"]->checkStatus()) {
 		throw std::runtime_error("Framebuffer is not complete!");
 	}
+	m_framebuffers["KernalEffect"]->unbind();
 	// m_framebuffers["KernalEffect"]->apply();
 }
 
@@ -88,8 +91,6 @@ void Application::run() {
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
 
-        m_window.pollEvents();
-
 		m_gui.newFrame();
 		GuiData guiData = {directLight, pointLight};
 		m_gui.updateGUI(guiData);
@@ -108,8 +109,8 @@ void Application::run() {
         m_uniform = {modelMatrix, directLight, pointLight};
 
 		m_framebuffers["KernalEffect"]->bind();
+		
 		m_renderer.enable(GL_DEPTH_TEST);
-
 		m_renderer.clearColor(0.47f, 0.53f, 0.6f, 1.0f);
         m_renderer.clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -123,16 +124,17 @@ void Application::run() {
 		m_renderer.setDepthFunc(GL_LESS);
 
 		m_framebuffers["KernalEffect"]->unbind();
+		
 		m_renderer.disable(GL_DEPTH_TEST);
-
-		m_renderer.clearColor(0.0f, 0.0f, 0.0f, 1.0f);
-		m_renderer.clear(GL_COLOR_BUFFER_BIT);
+		m_renderer.clearColor(1.0f, 1.0f, 1.0f, 1.0f);
+		m_renderer.clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		m_framebuffers["KernalEffect"]->render();
 
 		m_gui.render();
 		
         m_window.swapBuffers();
+		m_window.pollEvents();
     }
 }
 

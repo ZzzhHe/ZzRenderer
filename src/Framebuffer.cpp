@@ -33,6 +33,10 @@ Framebuffer::~Framebuffer() {
     delete m_VAO;
     delete m_VBO;
     
+	if (m_rbo != 0) {
+		GLCall(glDeleteRenderbuffers(1, &m_rbo));
+	}
+	
     GLCall(glDeleteFramebuffers(1, &m_fbo));
 }
 
@@ -58,28 +62,24 @@ void Framebuffer::setShader(std::shared_ptr<Shader> shader) {
 
 void Framebuffer::attachTexture() {
     // generate Texture
-    Texture texture(m_width, m_height, TextureType::FRAMEBUFFER);
+	m_texture = std::make_shared<Texture>(m_width, m_height, TextureType::FRAMEBUFFER);
     // attach
-    m_texture_id = texture.id();
-    GLCall(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_texture_id, 0));
+    GLCall(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_texture->id(), 0));
 }
 
 void Framebuffer::attachRenderBuffer() {
     // generate RenderBuffer
-    GLuint rbo;
-    GLCall(glGenRenderbuffers(1, &rbo));
-    GLCall(glBindRenderbuffer(GL_RENDERBUFFER, rbo));
+    GLCall(glGenRenderbuffers(1, &m_rbo));
+    GLCall(glBindRenderbuffer(GL_RENDERBUFFER, m_rbo));
     GLCall(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, m_width, m_height));
-    GLCall(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo));
-    GLCall(glBindRenderbuffer(GL_RENDERBUFFER, 0));
-    // attach
-    GLCall(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo));
+    
+	// attach
+    GLCall(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_rbo));
 }
 
 bool Framebuffer::checkStatus() {
     GLCall(GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER));
     if (status != GL_FRAMEBUFFER_COMPLETE) {
-        throw std::runtime_error("Framebuffer is not complete!");
         return false;
     }
     return true;
@@ -92,11 +92,11 @@ void Framebuffer::render() {
     m_shader->use();
     m_shader->setInt(m_name.c_str(), 0);
 
-    if (m_texture_id == 0) {
+    if (m_texture->id() == 0) {
         throw std::runtime_error("Framebuffer texture is not attached!");
     }
 
-    Texture::bindTextureWithId(m_texture_id, 0);
+	m_texture->bind();
 
     this->m_VAO->bind();
     GLCall(glDrawArrays(GL_TRIANGLES, 0, 6));
