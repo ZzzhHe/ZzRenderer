@@ -14,7 +14,6 @@ public:
     void attachRenderBuffer();
 
     void setShader(std::shared_ptr<Shader> shader);
-    // void apply();
 
     void bind();
     void unbind();

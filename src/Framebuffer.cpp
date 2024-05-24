@@ -52,14 +52,6 @@ void Framebuffer::setShader(std::shared_ptr<Shader> shader) {
     m_shader = shader;
 }
 
-// void Framebuffer::apply() {
-//     if (m_shader == nullptr) {
-//         throw std::runtime_error("Framebuffer shader is not set!");
-//     }
-//     m_shader->use();
-//     m_shader->setInt(m_name.c_str(), 0);
-// }
-
 void Framebuffer::attachTexture() {
     // generate Texture
 	m_texture = std::make_shared<Texture>(m_width, m_height, TextureType::FRAMEBUFFER);

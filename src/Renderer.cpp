@@ -20,6 +20,7 @@ void Renderer::setGlobalOpenGLState() {
 	GLCall(glEnable(GL_FRAMEBUFFER_SRGB)); // gamma correction
     GLCall(glEnable(GL_CULL_FACE)); // backface culling
 	GLCall(glEnable(GL_DEPTH_CLAMP));
+    GLCall(glEnable(GL_MULTISAMPLE)); // anti-aliasing
 }
 
 void Renderer::setViewport(int width, int height) {

@@ -31,7 +31,8 @@ Application::Application() {
 	m_shaders["skybox"] = std::make_shared<Shader>("shader/skybox.vert", "shader/skybox.frag");
 	m_shaders["kernel"] = std::make_shared<Shader>("shader/kernel.vert", "shader/kernel.frag");
 	m_shaders["passthrough"] = std::make_shared<Shader>("shader/passthrough.vert", "shader/passthrough.frag");
-
+	m_shaders["nightvision"] = std::make_shared<Shader>("shader/nightvision.vert", "shader/nightvision.frag");
+	
 	// uniform buffer objects
 	m_ubos["UboCamera"] = std::make_shared<Ubo>("UboCamera", sizeof(UboCamera));
 	m_ubos["UboCamera"]->uniformBlockBindingPoint(*m_shaders["main"], 0);
@@ -67,7 +68,6 @@ Application::Application() {
 	}
 	m_framebuffers["KernalEffect"]->unbind();
 
-		// Framebuffer
 	m_framebuffers["PassThrough"] = std::make_shared<Framebuffer>(WIDTH * 2, HEIGHT * 2, "PassThroughTexture");
 	m_framebuffers["PassThrough"]->setShader(m_shaders["passthrough"]);
 	m_framebuffers["PassThrough"]->bind();
@@ -77,6 +77,16 @@ Application::Application() {
 		throw std::runtime_error("Framebuffer is not complete!");
 	}
 	m_framebuffers["PassThrough"]->unbind();
+
+	m_framebuffers["NightVision"] = std::make_shared<Framebuffer>(WIDTH * 2, HEIGHT * 2, "NightVisionTexture");
+	m_framebuffers["NightVision"]->setShader(m_shaders["nightvision"]);
+	m_framebuffers["NightVision"]->bind();
+	m_framebuffers["NightVision"]->attachTexture();
+	m_framebuffers["NightVision"]->attachRenderBuffer();
+	if (!m_framebuffers["NightVision"]->checkStatus()) {
+		throw std::runtime_error("Framebuffer is not complete!");
+	}
+	m_framebuffers["NightVision"]->unbind();
 }
 
 Application::~Application() {
@@ -90,7 +100,7 @@ void Application::run() {
 	PointLight pointLight = {glm::vec3(2.0f, 2.0f, 0.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec4(1.0f, 1.0f, 1.0f, 0.2f)};
 
     glm::mat4 modelMatrix = glm::mat4(1.0f);
-//	modelMatrix = glm::scale(modelMatrix, glm::vec3(0.05f));
+	// modelMatrix = glm::scale(modelMatrix, glm::vec3(0.05f));
 	glm::mat4 viewMatrix = glm::mat4(1.0f);
 	glm::mat4 projectionMatrix = glm::mat4(1.0f);
 
@@ -152,9 +162,9 @@ void Application::run() {
 }
 
 void Application::loadRenderObjects() {
-//	auto model = std::make_shared<Model>("resource/model/yellow_car/Pony_cartoon.obj");
+	// auto model = std::make_shared<Model>("resource/model/yellow_car/Pony_cartoon.obj");
     auto model = std::make_shared<Model>("resource/model/nuka_cup/nuka_cup.obj");
-//	auto model = std::make_shared<Model>("resource/model/grass_cube/Grass_Block.obj");
+	// auto model = std::make_shared<Model>("resource/model/grass_cube/Grass_Block.obj");
     m_models.emplace(m_current_id, model);
     m_current_id++;
 }
