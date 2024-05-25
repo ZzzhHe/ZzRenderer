@@ -39,10 +39,10 @@ Application::Application() {
 		glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), 
 		glm::vec4(1.0f, 1.0f, 1.0f, 0.2f));
 
-	m_lights["PointLight"] = std::make_shared<PointLight>(
-		glm::vec3(2.0f, 2.0f, 0.0f), 
-		glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), 
-		glm::vec4(1.0f, 1.0f, 1.0f, 0.2f));
+	// m_lights["PointLight"] = std::make_shared<PointLight>(
+	// 	glm::vec3(2.0f, 2.0f, 0.0f), 
+	// 	glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), 
+	// 	glm::vec4(1.0f, 1.0f, 1.0f, 0.2f));
 
 	// uniform buffer objects
 	m_ubos["UboCamera"] = std::make_shared<Ubo>("UboCamera", sizeof(UboCamera));

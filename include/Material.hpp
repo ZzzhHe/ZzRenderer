@@ -33,10 +33,20 @@ public:
         }
 		shader->use();
 		shader->setMat4("model", uniformData.model);
-		
+        
+        int pointLightCount = 0;
+        int directLightCount = 0;
+
         for (auto &light : uniformData.lights) {
-            light->apply(shader);   
+            if (light->type == LightType::Point) {
+                light->apply(shader, pointLightCount++);
+            } else if (light->type == LightType::Direct) {
+                light->apply(shader, directLightCount++);
+            }
         }
+
+        shader->setInt("numPointLights", pointLightCount);
+        shader->setInt("numDirectLights", directLightCount);
 
         if (textures->diffuse) {
             shader->setInt("material.diffuse", 0);

@@ -31,8 +31,12 @@ struct Material {
 
 uniform Material material;
 
-uniform DirectLight directLight;
-uniform PointLight pointLight;
+#define MAX_LIGHTS 10
+
+uniform DirectLight directLight[MAX_LIGHTS];
+uniform PointLight pointLight[MAX_LIGHTS];
+uniform int numDirectLights;
+uniform int numPointLights;
 
 layout (std140) uniform UboCamera {
     mat4 view;
@@ -48,8 +52,14 @@ void main() {
 	normal = normal * 2.0 - 1.0;
 	normal = normalize(fs_in.TBN * normal);
 	vec3 viewDir = normalize(viewPos - fs_in.FragPos);
-    vec4 direct_light_color = CalcDirectLight(directLight, normal, viewDir);
-	vec4 point_light_color = CalcPointLight(pointLight, normal, viewDir);
+	vec4 direct_light_color = vec4(0.0);
+	for (int i = 0; i < numDirectLights; i ++) {
+		direct_light_color += CalcDirectLight(directLight[i], normal, viewDir);
+	}
+	vec4 point_light_color = vec4(0.0);
+	for (int i = 0; i < numPointLights; i ++) {
+		point_light_color += CalcPointLight(pointLight[i], normal, viewDir);
+	}
 	FragColor = direct_light_color + point_light_color;
 }
 
