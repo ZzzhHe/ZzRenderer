@@ -9,6 +9,7 @@ layout(location = 4) in vec3 aBitangent;
 out VS_OUT {
     vec2 TexCoords;
     vec3 FragPos;
+    vec4 FragPosLightSpace;
     mat3 TBN;
 } vs_out;
 
@@ -19,6 +20,7 @@ layout (std140) uniform UboCamera {
 };
 
 uniform mat4 model;
+uniform mat4 lightSpaceMatrix;
 
 void main() {
     gl_Position = projection * view * model * vec4(aPos, 1.0);
@@ -34,4 +36,6 @@ void main() {
     // vec3 B = cross(N, T);
 
     vs_out.TBN = mat3(T, B, N);
+
+    vs_out.FragPosLightSpace = lightSpaceMatrix * vec4(vs_out.FragPos, 1.0);
 }

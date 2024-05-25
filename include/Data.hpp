@@ -4,7 +4,13 @@
 
 struct SharedUniform {
     glm::mat4 model;
+    glm::mat4 lightSpaceMatrix;
     std::vector<std::shared_ptr<Light>> lights;
+};
+
+struct ShadowUniform {
+    glm::mat4 model;
+    glm::mat4 lightSpaceMatrix;
 };
 
 struct UboCamera {

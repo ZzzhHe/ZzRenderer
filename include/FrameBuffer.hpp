@@ -25,6 +25,8 @@ public:
 
     bool checkStatus();
 
+    GLuint getTextureId() const;
+
 private:
     GLuint m_fbo;
     VertexArray *m_VAO;

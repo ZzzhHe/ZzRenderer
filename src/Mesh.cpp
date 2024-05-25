@@ -33,6 +33,13 @@ void Mesh::render(const SharedUniform& uniform) {
     GLCall(glDrawElements(GL_TRIANGLES, this->m_IBO->getCount(), GL_UNSIGNED_INT, nullptr));
 }
 
+void Mesh::render(const ShadowUniform& uniform) {
+    m_material->apply(uniform);
+    this->m_VAO->bind();
+    this->m_IBO->bind();
+    GLCall(glDrawElements(GL_TRIANGLES, this->m_IBO->getCount(), GL_UNSIGNED_INT, nullptr));
+}
+
 void Mesh::setShader(std::shared_ptr<Shader> shader) {
     m_material->shader = shader;
 }

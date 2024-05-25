@@ -11,6 +11,12 @@ void Model::render(const SharedUniform& uniform) const {
     }
 }
 
+void Model::render(const ShadowUniform& uniform) const {
+    for (auto &kv : m_meshes) {
+        kv.second->render(uniform);
+    }
+}
+
 Model::Model(const char *path) {
     loadModel(path);
     m_current_id = 0;

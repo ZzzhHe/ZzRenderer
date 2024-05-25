@@ -23,6 +23,7 @@ public:
     ~Mesh();
 
     void render(const SharedUniform& uniform);
+    void render(const ShadowUniform& uniform);
     void setMaterial(std::shared_ptr<Material> material);
     void setShader(std::shared_ptr<Shader> shader);
 

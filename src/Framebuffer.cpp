@@ -1,4 +1,4 @@
-#include "FrameBuffer.hpp"
+#include "Framebuffer.hpp"
 #include "GLDebug.hpp"
 
 Framebuffer::Framebuffer(const unsigned int width, const unsigned int height, const std::string name) 
@@ -114,4 +114,7 @@ void Framebuffer::render() {
     GLCall(glDrawArrays(GL_TRIANGLES, 0, 6));
 }
 
+GLuint Framebuffer::getTextureId() const {
+    return m_texture->id();
+}
 

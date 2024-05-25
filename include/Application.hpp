@@ -6,7 +6,8 @@
 #include "Gui.hpp"
 #include "Skybox.hpp"
 #include "Ubo.hpp"
-#include "FrameBuffer.hpp"
+#include "Framebuffer.hpp"
+#include "ShadowMap.hpp"
 
 #include <unordered_map>
 #include <memory>
@@ -47,4 +48,5 @@ private:
     static model_id_t m_current_id;
 
     std::unordered_map<std::string, std::shared_ptr<Framebuffer>> m_framebuffers;
+    std::unordered_map<std::string, std::shared_ptr<ShadowMap>> m_shadowmaps;
 };

@@ -32,6 +32,7 @@ Application::Application() {
 	m_shaders["kernel"] = std::make_shared<Shader>("shader/kernel.vert", "shader/kernel.frag");
 	m_shaders["passthrough"] = std::make_shared<Shader>("shader/passthrough.vert", "shader/passthrough.frag");
 	m_shaders["nightvision"] = std::make_shared<Shader>("shader/nightvision.vert", "shader/nightvision.frag");
+	m_shaders["shadow"] = std::make_shared<Shader>("shader/shadow.vert", "shader/shadow.frag");
 	
 	// light
 	m_lights["DirectLight"] = std::make_shared<DirectLight>(
@@ -99,13 +100,10 @@ Application::Application() {
 	}
 	m_framebuffers["NightVision"]->unbind();
 
-	// m_framebuffers["ShadowMap"] = std::make_shared<Framebuffer>(1024, 1024, "ShadowMapTexture");
-	// m_framebuffers["ShadowMap"]->bind();
-	// m_framebuffers["ShadowMap"]->attachShadowTexture();
-	// if (!m_framebuffers["ShadowMap"]->checkStatus()) {
-	// 	throw std::runtime_error("Framebuffer is not complete!");
-	// }
-	// m_framebuffers["ShadowMap"]->unbind();
+	// shadow map
+	m_shadowmaps["DirectLight"] = std::make_shared<ShadowMap>(1024, 1024, LightType::Direct);
+	m_shadowmaps["DirectLight"]->setShader(m_shaders["shadow"]);
+	m_shadowmaps["DirectLight"]->setupDirectLight(std::static_pointer_cast<DirectLight>(m_lights["DirectLight"]));
 }
 
 Application::~Application() {
@@ -129,12 +127,14 @@ void Application::run() {
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
 
+		// gui
 		m_gui.newFrame();
 		GuiData guiData = {m_lights, getKeys(m_framebuffers), currentFramebuffer};
 		m_gui.updateGUI(guiData);
 		
 		m_window.processKeyboard(deltaTime);
 
+		// update data
 		viewMatrix = m_camera->getViewMatrix();
 		projectionMatrix = m_camera->getProjectionMatrix(static_cast<float>(Application::WIDTH) / Application::HEIGHT);
 		
@@ -143,14 +143,27 @@ void Application::run() {
 		m_ubos["UboCamera"]->addData(m_camera->getCameraPos());
 		m_ubos["UboCamera"]->flush();
 
-        m_uniform = {modelMatrix, getValues(m_lights)};
+        m_uniform = {modelMatrix, glm::mat4(1.0f), getValues(m_lights)};
+		ShadowUniform shadowUniform = {modelMatrix, glm::mat4(1.0f)};
+
+		// render
+		// shadow map
+		m_renderer.enable(GL_DEPTH_TEST);
+		m_renderer.clear(GL_DEPTH_BUFFER_BIT);
+		m_shadowmaps["DirectLight"]->render(m_models[m_current_id - 1], shadowUniform);
+
+		// main render
+		m_models[m_current_id - 1]->setShader(m_shaders["main"]);
 
 		m_framebuffers[currentFramebuffer]->bind();
-		
+
 		m_renderer.enable(GL_DEPTH_TEST);
 		m_renderer.clearColor(0.47f, 0.53f, 0.6f, 1.0f);
         m_renderer.clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+		m_uniform.lightSpaceMatrix = m_shadowmaps["DirectLight"]->getLightSpaceMatrices()[0];
+		m_shaders["main"]->use();
+		m_shaders["main"]->setInt("shadowMap",  m_shadowmaps["DirectLight"]->getDepthMap());
         for (const auto& kv : m_models) {
             auto model = kv.second;
             m_renderer.render(model, m_uniform); // TODO: set modelMatrix for each model?

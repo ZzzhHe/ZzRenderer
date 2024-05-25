@@ -61,4 +61,13 @@ public:
             textures->normal->bind(2);
         }
     }
+
+    void apply(const ShadowUniform& uniformData) const {
+        if (shader == nullptr) {
+            throw std::runtime_error("Shader is nullptr");
+        }
+        shader->use();
+        shader->setMat4("model", uniformData.model);
+        shader->setMat4("lightSpaceMatrix", uniformData.lightSpaceMatrix);
+    };
 };

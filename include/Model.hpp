@@ -12,6 +12,7 @@ public :
     Model(const char *path);
     ~Model();
     void render(const SharedUniform& uniform) const;
+    void render(const ShadowUniform& uniform) const;
 
     using mesh_id_t = unsigned int;
     using mesh_map_t = std::unordered_map<mesh_id_t, std::shared_ptr<Mesh>>;
