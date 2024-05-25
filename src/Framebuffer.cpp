@@ -114,7 +114,7 @@ void Framebuffer::render() {
     GLCall(glDrawArrays(GL_TRIANGLES, 0, 6));
 }
 
-GLuint Framebuffer::getTextureId() const {
-    return m_texture->id();
+std::shared_ptr<Texture> Framebuffer::getTexture() const {
+    return m_texture;
 }
 

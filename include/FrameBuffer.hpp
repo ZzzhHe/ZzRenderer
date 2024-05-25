@@ -25,7 +25,7 @@ public:
 
     bool checkStatus();
 
-    GLuint getTextureId() const;
+	std::shared_ptr<Texture> getTexture() const;
 
 private:
     GLuint m_fbo;

@@ -48,8 +48,8 @@ void ShadowMap::unbindFramebuffer() {
     m_framebuffer->unbind();
 }
 
-GLuint ShadowMap::getDepthMap() const {
-    return m_framebuffer->getTextureId();
+std::shared_ptr<Texture> ShadowMap::getDepthMapTexture() const {
+    return m_framebuffer->getTexture();
 }
 
 const std::vector<glm::mat4>& ShadowMap::getLightSpaceMatrices() const {

@@ -163,7 +163,8 @@ void Application::run() {
 
 		m_uniform.lightSpaceMatrix = m_shadowmaps["DirectLight"]->getLightSpaceMatrices()[0];
 		m_shaders["main"]->use();
-		m_shaders["main"]->setInt("shadowMap",  m_shadowmaps["DirectLight"]->getDepthMap());
+		m_shaders["main"]->setInt("shadowMap", 3);
+		m_shadowmaps["DirectLight"]->getDepthMapTexture()->bind(3); // TODO: make it looks better, and no shadow effect
         for (const auto& kv : m_models) {
             auto model = kv.second;
             m_renderer.render(model, m_uniform); // TODO: set modelMatrix for each model?
