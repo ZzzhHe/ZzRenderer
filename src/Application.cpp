@@ -33,6 +33,17 @@ Application::Application() {
 	m_shaders["passthrough"] = std::make_shared<Shader>("shader/passthrough.vert", "shader/passthrough.frag");
 	m_shaders["nightvision"] = std::make_shared<Shader>("shader/nightvision.vert", "shader/nightvision.frag");
 	
+	// light
+	m_lights["DirectLight"] = std::make_shared<DirectLight>(
+		glm::vec3(5.0f, -5.0f, 0.0f), 
+		glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), 
+		glm::vec4(1.0f, 1.0f, 1.0f, 0.2f));
+
+	m_lights["PointLight"] = std::make_shared<PointLight>(
+		glm::vec3(2.0f, 2.0f, 0.0f), 
+		glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), 
+		glm::vec4(1.0f, 1.0f, 1.0f, 0.2f));
+
 	// uniform buffer objects
 	m_ubos["UboCamera"] = std::make_shared<Ubo>("UboCamera", sizeof(UboCamera));
 	m_ubos["UboCamera"]->uniformBlockBindingPoint(*m_shaders["main"], 0);
@@ -87,6 +98,14 @@ Application::Application() {
 		throw std::runtime_error("Framebuffer is not complete!");
 	}
 	m_framebuffers["NightVision"]->unbind();
+
+	// m_framebuffers["ShadowMap"] = std::make_shared<Framebuffer>(1024, 1024, "ShadowMapTexture");
+	// m_framebuffers["ShadowMap"]->bind();
+	// m_framebuffers["ShadowMap"]->attachShadowTexture();
+	// if (!m_framebuffers["ShadowMap"]->checkStatus()) {
+	// 	throw std::runtime_error("Framebuffer is not complete!");
+	// }
+	// m_framebuffers["ShadowMap"]->unbind();
 }
 
 Application::~Application() {
@@ -94,10 +113,6 @@ Application::~Application() {
 
 void Application::run() {
     std::cout << "Running application..." << std::endl;
-
-	DirectLight directLight = {glm::vec3(5.0f, -5.0f, 0.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec4(1.0f, 1.0f, 1.0f, 0.2f)}; // TODO: y and -y axis?
-
-	PointLight pointLight = {glm::vec3(2.0f, 2.0f, 0.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec4(1.0f, 1.0f, 1.0f, 0.2f)};
 
     glm::mat4 modelMatrix = glm::mat4(1.0f);
 	// modelMatrix = glm::scale(modelMatrix, glm::vec3(0.05f));
@@ -115,11 +130,10 @@ void Application::run() {
         lastFrame = currentFrame;
 
 		m_gui.newFrame();
-		GuiData guiData = {directLight, pointLight, getKeys(m_framebuffers), currentFramebuffer};
+		GuiData guiData = {m_lights, getKeys(m_framebuffers), currentFramebuffer};
 		m_gui.updateGUI(guiData);
 		
 		m_window.processKeyboard(deltaTime);
-
 
 		viewMatrix = m_camera->getViewMatrix();
 		projectionMatrix = m_camera->getProjectionMatrix(static_cast<float>(Application::WIDTH) / Application::HEIGHT);
@@ -129,7 +143,7 @@ void Application::run() {
 		m_ubos["UboCamera"]->addData(m_camera->getCameraPos());
 		m_ubos["UboCamera"]->flush();
 
-        m_uniform = {modelMatrix, directLight, pointLight};
+        m_uniform = {modelMatrix, getValues(m_lights)};
 
 		m_framebuffers[currentFramebuffer]->bind();
 		

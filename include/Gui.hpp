@@ -1,11 +1,12 @@
 #pragma once
 
-#include "Window.hpp"
 #include "Light.hpp"
+#include "Window.hpp"
+
+#include <unordered_map>
 
 struct GuiData{
-    DirectLight& directLight;
-    PointLight& pointLight;
+    std::unordered_map<std::string, std::shared_ptr<Light>>& lights;
     const std::vector<std::string>& framebufferType;
     std::string& currentFramebuffer;
 };

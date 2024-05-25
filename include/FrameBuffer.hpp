@@ -11,7 +11,10 @@ public:
     ~Framebuffer();
 
     void attachTexture();
+    void attachShadowTexture();
+
     void attachRenderBuffer();
+    void attachDepthBuffer();
 
     void setShader(std::shared_ptr<Shader> shader);
 

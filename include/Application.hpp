@@ -33,6 +33,8 @@ private:
 	
 	std::shared_ptr<Camera> m_camera;
 	std::shared_ptr<CameraController> m_cameraController;
+
+    std::unordered_map<std::string, std::shared_ptr<Light>> m_lights;  
 	
 	SharedUniform m_uniform;
     std::unordered_map<std::string, std::shared_ptr<Ubo>> m_ubos;

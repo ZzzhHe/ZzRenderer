@@ -37,38 +37,28 @@ void Gui::updateGUI(GuiData& guiData) {
 		
     ImGui::CollapsingHeader("Lights");
     
-    if(ImGui::TreeNode("Direct Light")) {
-        ImGui::SliderFloat3("Direction", &guiData.directLight.direction[0], -10.0f, 10.0f, "X: %.1f Y: %.1f Z: %.1f");
-        
-        ImGui::ColorEdit3("Color", &guiData.directLight.color[0], ImGuiColorEditFlags_Float);
-        
-        // Slider for light intensity using the alpha channel of the color
-        ImGui::SliderFloat("Intensity", &guiData.directLight.color.w, 0.0f, 1.0f, "%.2f");
-        
-        // Color picker for ambient color (ignores alpha)
-        ImGui::ColorEdit3("Ambient Color", &guiData.directLight.ambientColor[0], ImGuiColorEditFlags_Float);
-        
-        // Slider for ambient intensity using the alpha channel of the ambient color
-        ImGui::SliderFloat("Ambient Intensity", &guiData.directLight.ambientColor.w, 0.0f, 1.0f, "%.2f");
-        
-        ImGui::TreePop();
-    }
-    
-    if(ImGui::TreeNode("Point Light")) {
-        ImGui::SliderFloat3("Position", &guiData.pointLight.position[0], -10.0f, 10.0f, "X: %.1f Y: %.1f Z: %.1f");
-        
-        ImGui::ColorEdit3("Color", &guiData.pointLight.color[0], ImGuiColorEditFlags_Float);
-        
-        // Slider for light intensity using the alpha channel of the color
-        ImGui::SliderFloat("Intensity", &guiData.pointLight.color.w, 0.0f, 1.0f, "%.2f");
-        
-        // Color picker for ambient color (ignores alpha)
-        ImGui::ColorEdit3("Ambient Color", &guiData.pointLight.ambientColor[0], ImGuiColorEditFlags_Float);
-        
-        // Slider for ambient intensity using the alpha channel of the ambient color
-        ImGui::SliderFloat("Ambient Intensity", &guiData.pointLight.ambientColor.w, 0.0f, 1.0f, "%.2f");
+
+    for (auto& [name, light] : guiData.lights) {
+        if(ImGui::TreeNode(name.c_str())) {
+            if (light->type == LightType::Point) {
+                auto pointLight = std::dynamic_pointer_cast<PointLight>(light);
+                ImGui::SliderFloat3("Position", &pointLight->position[0], -10.0f, 10.0f, "X: %.1f Y: %.1f Z: %.1f");
+            } else {
+                auto directLight = std::dynamic_pointer_cast<DirectLight>(light);
+                ImGui::SliderFloat3("Direction", &directLight->direction[0], -10.0f, 10.0f, "X: %.1f Y: %.1f Z: %.1f");
+            }
+
+            // Slider for light intensity using the alpha channel of the color
+            ImGui::SliderFloat("Intensity", &light->color.w, 0.0f, 1.0f, "%.2f");
             
-        ImGui::TreePop();
+            // Color picker for ambient color (ignores alpha)
+            ImGui::ColorEdit3("Ambient Color", &light->ambientColor[0], ImGuiColorEditFlags_Float);
+            
+            // Slider for ambient intensity using the alpha channel of the ambient color
+            ImGui::SliderFloat("Ambient Intensity", &light->ambientColor.w, 0.0f, 1.0f, "%.2f");
+
+            ImGui::TreePop();
+        }
     }
 
     ImGui::CollapsingHeader("Post-processing");

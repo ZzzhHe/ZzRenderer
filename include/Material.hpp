@@ -34,16 +34,9 @@ public:
 		shader->use();
 		shader->setMat4("model", uniformData.model);
 		
-		shader->setVec3("directLight.direction", uniformData.directLight.direction);
-		shader->setVec4("directLight.ambientColor", uniformData.directLight.ambientColor);
-		shader->setVec4("directLight.color", uniformData.directLight.color);
-		
-		shader->setVec3("pointLight.position", uniformData.pointLight.position);
-		shader->setVec4("pointLight.ambientColor", uniformData.pointLight.ambientColor);
-		shader->setVec4("pointLight.color", uniformData.pointLight.color);
-		shader->setFloat("pointLight.constant", uniformData.pointLight.constant);
-		shader->setFloat("pointLight.linear", uniformData.pointLight.linear);
-		shader->setFloat("pointLight.quadratic", uniformData.pointLight.quadratic);
+        for (auto &light : uniformData.lights) {
+            light->apply(shader);   
+        }
 
         if (textures->diffuse) {
             shader->setInt("material.diffuse", 0);

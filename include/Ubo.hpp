@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Light.hpp"
-#include "Shader.hpp"
 
 #include <type_traits>
 

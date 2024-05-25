@@ -13,3 +13,13 @@ std::vector<K> getKeys(const std::unordered_map<K, V>& map) {
     }
     return keys;
 }
+
+template <typename K, typename V>
+std::vector<V> getValues(const std::unordered_map<K, V>& map) {
+    std::vector<V> values;
+    values.reserve(map.size()); // Reserve space to avoid multiple allocations
+    for (const auto& pair : map) {
+        values.push_back(pair.second);
+    }
+    return values;
+}

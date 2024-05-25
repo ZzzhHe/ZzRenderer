@@ -4,8 +4,7 @@
 
 struct SharedUniform {
     glm::mat4 model;
-	DirectLight directLight;
-    PointLight pointLight;
+    std::vector<std::shared_ptr<Light>> lights;
 };
 
 struct UboCamera {

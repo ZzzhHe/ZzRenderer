@@ -9,6 +9,7 @@ enum struct TextureType {
     NORMAL,
     CUBE_MAP,
     FRAMEBUFFER,
+    SHADOW_MAP,
 };
 
 class Texture {
@@ -16,7 +17,7 @@ public:
     Texture(const std::vector<std::string>& paths, TextureType type); // for cube maps
     Texture(const std::string& path, const TextureType type);
     Texture(const unsigned int width, const unsigned int height, const TextureType type);
-
+    
     ~Texture();
 
     void bind(const unsigned int slot = 0) const;
