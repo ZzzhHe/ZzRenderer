@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Light.hpp"
-#include "Framebuffer.hpp"
 #include "Model.hpp"
 
 class ShadowMap {
@@ -10,7 +9,9 @@ public:
     ~ShadowMap();
 
     void setupDirectLight(const std::shared_ptr<DirectLight>& directLight);
-
+	
+	void attachTexture();
+	
     void bindFramebuffer();
     void unbindFramebuffer();
 
@@ -23,7 +24,9 @@ public:
     std::shared_ptr<Shader> getShader() const { return m_shader; }
 
 private:
-    std::shared_ptr<Framebuffer> m_framebuffer;
+	GLuint m_shadowFBO;
+	unsigned int m_width, m_height;
+    std::shared_ptr<Texture> m_texture;
     unsigned int m_depthMap;
     LightType m_lightType;
     std::vector<glm::mat4> m_lightSpaceMatrices;

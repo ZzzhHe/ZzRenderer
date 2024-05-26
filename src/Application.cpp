@@ -14,8 +14,8 @@
 #include <string>
 #include <iostream>
 
-const int Application::WIDTH = 800;
-const int Application::HEIGHT = 600;
+const int Application::WIDTH = 1600;
+const int Application::HEIGHT = 1200;
 
 Application::model_id_t Application::m_current_id = 0;
 
@@ -36,9 +36,9 @@ Application::Application() {
 	
 	// light
 	m_lights["DirectLight"] = std::make_shared<DirectLight>(
-		glm::vec3(5.0f, -5.0f, 0.0f), 
-		glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), 
-		glm::vec4(1.0f, 1.0f, 1.0f, 0.2f));
+		glm::vec3(4.0f, -2.0f, 0.0f),
+		glm::vec4(1.0f, 1.0f, 1.0f, 1.0f),
+		glm::vec4(1.0f, 1.0f, 1.0f, 0.1f));
 
 	// m_lights["PointLight"] = std::make_shared<PointLight>(
 	// 	glm::vec3(2.0f, 2.0f, 0.0f), 
@@ -52,7 +52,9 @@ Application::Application() {
 
 	// model and skybox
 	loadRenderObjects();
-	m_models[m_current_id - 1]->setShader(m_shaders["main"]); // TODO: set shader for each mesh?
+	for (unsigned int i = 0; i < m_current_id; i ++) {
+		m_models[i]->setShader(m_shaders["main"]);
+	}
 	
 	std::vector<std::string> skybox_faces = {
 		"resource/skybox/iceberg/right.jpg",
@@ -112,8 +114,6 @@ Application::~Application() {
 void Application::run() {
     std::cout << "Running application..." << std::endl;
 
-    glm::mat4 modelMatrix = glm::mat4(1.0f);
-	// modelMatrix = glm::scale(modelMatrix, glm::vec3(0.05f));
 	glm::mat4 viewMatrix = glm::mat4(1.0f);
 	glm::mat4 projectionMatrix = glm::mat4(1.0f);
 
@@ -143,28 +143,38 @@ void Application::run() {
 		m_ubos["UboCamera"]->addData(m_camera->getCameraPos());
 		m_ubos["UboCamera"]->flush();
 
-        m_uniform = {modelMatrix, glm::mat4(1.0f), getValues(m_lights)};
-		ShadowUniform shadowUniform = {modelMatrix, glm::mat4(1.0f)};
+		ShadowUniform shadowUniform = {glm::mat4(1.0f), glm::mat4(1.0f)};
 
 		// render
 		// shadow map
 		m_renderer.enable(GL_DEPTH_TEST);
 		m_renderer.clear(GL_DEPTH_BUFFER_BIT);
-		m_shadowmaps["DirectLight"]->render(m_models[m_current_id - 1], shadowUniform);
+		m_renderer.setViewport(1024 * 2, 1024 * 2);
+		for (unsigned int i = 0; i < m_current_id; i ++) {
+			m_shadowmaps["DirectLight"]->render(m_models[i], shadowUniform);
+		}
+		
 
 		// main render
-		m_models[m_current_id - 1]->setShader(m_shaders["main"]);
+		for (unsigned int i = 0; i < m_current_id; i ++) {
+			m_models[i]->setShader(m_shaders["main"]);
+		}
 
 		m_framebuffers[currentFramebuffer]->bind();
 
 		m_renderer.enable(GL_DEPTH_TEST);
 		m_renderer.clearColor(0.47f, 0.53f, 0.6f, 1.0f);
         m_renderer.clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		m_renderer.setViewport(WIDTH * 2, HEIGHT * 2);
 
-		m_uniform.lightSpaceMatrix = m_shadowmaps["DirectLight"]->getLightSpaceMatrices()[0];
-		m_shaders["main"]->use();
-		m_shaders["main"]->setInt("shadowMap", 3);
-		m_shadowmaps["DirectLight"]->getDepthMapTexture()->bind(3); // TODO: make it looks better, and no shadow effect
+		
+		m_uniform = {
+			glm::mat4(1.0f),
+			m_shadowmaps["DirectLight"]->getLightSpaceMatrices()[0],
+			m_shadowmaps["DirectLight"]->getDepthMapTexture(),
+			getValues(m_lights)
+		};
+
         for (const auto& kv : m_models) {
             auto model = kv.second;
             m_renderer.render(model, m_uniform); // TODO: set modelMatrix for each model?
@@ -190,9 +200,26 @@ void Application::run() {
 }
 
 void Application::loadRenderObjects() {
-	// auto model = std::make_shared<Model>("resource/model/yellow_car/Pony_cartoon.obj");
-    auto model = std::make_shared<Model>("resource/model/nuka_cup/nuka_cup.obj");
-	// auto model = std::make_shared<Model>("resource/model/grass_cube/Grass_Block.obj");
-    m_models.emplace(m_current_id, model);
-    m_current_id++;
+//	 auto model = std::make_shared<Model>("resource/model/yellow_car/Pony_cartoon.obj");
+	glm::mat4 modelMatrix = glm::mat4(1.0f);
+	
+//	auto model = std::make_shared<Model>("resource/model/grass_cube/Grass_Block.obj");
+//	modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(-2.0f, -1.0f, 0.0f));
+//	model->setModelMatrix(modelMatrix);
+//	m_models.emplace(m_current_id, model);
+//	m_current_id++;
+	
+	auto model = std::make_shared<Model>("resource/model/jam/jam.obj");
+	modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(-2.0f, -1.0f, 0.0f));
+	model->setModelMatrix(modelMatrix);
+	m_models.emplace(m_current_id, model);
+	m_current_id++;
+	
+	model = std::make_shared<Model>("resource/model/nuka_cup/nuka_cup.obj");
+	modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(2.0f, 0.0f, 0.0f));
+	model->setModelMatrix(modelMatrix);
+	m_models.emplace(m_current_id, model);
+	m_current_id++;
+//	
+
 }

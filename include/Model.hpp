@@ -11,8 +11,8 @@ class Model {
 public :
     Model(const char *path);
     ~Model();
-    void render(const SharedUniform& uniform) const;
-    void render(const ShadowUniform& uniform) const;
+    void render(SharedUniform& uniform) const;
+    void render(ShadowUniform& uniform) const;
 
     using mesh_id_t = unsigned int;
     using mesh_map_t = std::unordered_map<mesh_id_t, std::shared_ptr<Mesh>>;
@@ -21,6 +21,8 @@ public :
     void setShader(mesh_id_t mesh_id, std::shared_ptr<Shader> shader);
     void setMaterial(std::shared_ptr<Material> material);
     void setMaterial(mesh_id_t mesh_id, std::shared_ptr<Material> material);
+	
+	void setModelMatrix(const glm::mat4& modelMatrix);
 
 private :
     void loadModel(const std::string& path);
@@ -33,4 +35,5 @@ private:
     std::vector<std::shared_ptr<Texture>> m_loaded_textures;
     std::string m_directory;
     static mesh_id_t m_current_id;
+	glm::mat4 m_modelMatrix;
 };

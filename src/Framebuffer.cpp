@@ -59,13 +59,6 @@ void Framebuffer::attachTexture() {
     GLCall(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_texture->id(), 0));
 }
 
-void Framebuffer::attachShadowTexture() {
-    // generate Texture
-    m_texture = std::make_shared<Texture>(m_width, m_height, TextureType::SHADOW_MAP);
-    // attach
-    GLCall(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_texture->id(), 0));
-}
-
 void Framebuffer::attachRenderBuffer() {
     // generate RenderBuffer
     GLCall(glGenRenderbuffers(1, &m_rbo));
@@ -74,19 +67,6 @@ void Framebuffer::attachRenderBuffer() {
     
 	// attach
     GLCall(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_rbo));
-}
-
-void Framebuffer::attachDepthBuffer() {
-    // generate RenderBuffer
-    GLCall(glGenRenderbuffers(1, &m_rbo));
-    GLCall(glBindRenderbuffer(GL_RENDERBUFFER, m_rbo));
-    GLCall(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, m_width, m_height));
-    
-    // attach
-    GLCall(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_rbo));
-    // Disable color buffer
-    GLCall(glDrawBuffer(GL_NONE));
-    GLCall(glReadBuffer(GL_NONE));
 }
 
 bool Framebuffer::checkStatus() {

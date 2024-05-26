@@ -11,6 +11,7 @@ struct MaterialTextures {
     std::shared_ptr<Texture> diffuse;
     std::shared_ptr<Texture> specular;
     std::shared_ptr<Texture> normal;
+	std::shared_ptr<Texture> shadow;
 
     bool operator==(const MaterialTextures& other) const {
         return diffuse == other.diffuse 
@@ -60,6 +61,13 @@ public:
             shader->setInt("material.normal", 2);
             textures->normal->bind(2);
         }
+		
+		textures->shadow = uniformData.shadowMap;
+		
+		if (textures->shadow) {
+			shader->setInt("shadowMap", 3);
+			textures->shadow->bind(3);
+		}
     }
 
     void apply(const ShadowUniform& uniformData) const {

@@ -5,13 +5,15 @@
 // static member initialization, must be done outside of the class
 Model::mesh_id_t Model::m_current_id = 0;
 
-void Model::render(const SharedUniform& uniform) const {
+void Model::render(SharedUniform& uniform) const {
+	uniform.model = m_modelMatrix;
     for (auto &kv : m_meshes) {
         kv.second->render(uniform);
     }
 }
 
-void Model::render(const ShadowUniform& uniform) const {
+void Model::render(ShadowUniform& uniform) const {
+	uniform.model = m_modelMatrix;
     for (auto &kv : m_meshes) {
         kv.second->render(uniform);
     }
@@ -161,6 +163,10 @@ std::shared_ptr<Texture> Model::loadMaterialTextures(aiMaterial *material, aiTex
     }
 
     return nullptr; // Return nullptr if no textures are found
+}
+
+void Model::setModelMatrix(const glm::mat4 &modelMatrix) {
+	m_modelMatrix = modelMatrix;
 }
 
 

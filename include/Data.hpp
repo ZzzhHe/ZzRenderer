@@ -5,6 +5,7 @@
 struct SharedUniform {
     glm::mat4 model;
     glm::mat4 lightSpaceMatrix;
+	std::shared_ptr<Texture> shadowMap;
     std::vector<std::shared_ptr<Light>> lights;
 };
 

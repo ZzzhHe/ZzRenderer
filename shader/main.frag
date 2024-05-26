@@ -56,7 +56,8 @@ void main() {
 	normal = normalize(fs_in.TBN * normal);
 	vec3 viewDir = normalize(viewPos - fs_in.FragPos);
 	vec4 direct_light_color = vec4(0.0);
-	float shadow = ShadowCalculation(fs_in.FragPosLightSpace);  
+	float shadow = ShadowCalculation(fs_in.FragPosLightSpace);
+	shadow = 0.0;
 	for (int i = 0; i < numDirectLights; i ++) {
 		direct_light_color += CalcDirectLight(directLight[i], normal, viewDir, shadow);
 	}
@@ -132,7 +133,8 @@ float ShadowCalculation(vec4 fragPosLightSpace) {
     // get depth of current fragment from light's perspective
     float currentDepth = projCoords.z;
     // check whether current frag pos is in shadow
-    float shadow = currentDepth > closestDepth  ? 1.0 : 0.0;
+	float bias = 0.005;
+    float shadow = currentDepth - bias > closestDepth  ? 1.0 : 0.0;
 
     return shadow;
 }

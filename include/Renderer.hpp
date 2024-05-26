@@ -15,7 +15,7 @@ public:
 
     void setDepthFunc(const GLenum func);
 
-    void render(std::shared_ptr<Model> model, const SharedUniform& uniform);
+    void render(std::shared_ptr<Model> model, SharedUniform& uniform);
 
 private:
     void setGlobalOpenGLState();

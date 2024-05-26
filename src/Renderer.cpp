@@ -31,7 +31,7 @@ void Renderer::setDepthFunc(const GLenum func) {
     GLCall(glDepthFunc(func));
 }
 
-void Renderer::render(std::shared_ptr<Model> model, const SharedUniform& uniform) {
+void Renderer::render(std::shared_ptr<Model> model, SharedUniform& uniform) {
     model->render(uniform);
 }
 
