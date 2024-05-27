@@ -55,8 +55,8 @@ void main() {
 	normal = normal * 2.0 - 1.0;
 	normal = normalize(fs_in.TBN * normal);
 	vec3 viewDir = normalize(viewPos - fs_in.FragPos);
-	vec4 direct_light_color = vec4(0.0);
 	float shadow = ShadowCalculation(fs_in.FragPosLightSpace);
+	vec4 direct_light_color = vec4(0.0);
 	for (int i = 0; i < numDirectLights; i ++) {
 		direct_light_color += CalcDirectLight(directLight[i], normal, viewDir, shadow);
 	}
@@ -134,6 +134,9 @@ float ShadowCalculation(vec4 fragPosLightSpace) {
     // check whether current frag pos is in shadow
 	float bias = 0.005;
     float shadow = currentDepth - bias > closestDepth  ? 1.0 : 0.0;
+//	FragColor = vec4(vec3(projCoords.z), 1.0);  //View depth values
+//	FragColor = vec4(vec3(closestDepth), 1.0);
+//	FragColor = vec4(vec3(currentDepth - bias), 1.0);
 
     return shadow;
 }

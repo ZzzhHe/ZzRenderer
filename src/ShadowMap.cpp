@@ -32,8 +32,8 @@ ShadowMap::~ShadowMap() {
 }
 
 void ShadowMap::setupDirectLight(const std::shared_ptr<DirectLight>& directLight) {
-    glm::vec3 lightPos = directLight->direction * -2.0f; // TODO : not sure about this
-    glm::mat4 lightProjection = glm::ortho(-5.0f, 5.0f, -5.0f, 5.0f, 0.1f, 20.0f);
+    glm::vec3 lightPos = directLight->direction * -5.0f; // TODO : not sure about this
+    glm::mat4 lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 0.1f, 40.0f);
     glm::mat4 lightView = glm::lookAt(lightPos, glm::vec3(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
     if (m_lightSpaceMatrices.size() == 0) {
 		m_lightSpaceMatrices.push_back(lightProjection * lightView);
@@ -48,6 +48,8 @@ void ShadowMap::setupDirectLight(const std::shared_ptr<DirectLight>& directLight
 void ShadowMap::render(std::shared_ptr<Model> model, ShadowUniform& uniformData) {
 	bindFramebuffer();
 	// GLCall(glCullFace(GL_FRONT));
+//	GLCall(glViewport(0, 0, m_width, m_height));
+//	GLCall(glClear(GL_DEPTH_BUFFER_BIT));
     uniformData.lightSpaceMatrix = m_lightSpaceMatrices[0];
     model->setShader(m_shader);
     model->render(uniformData);

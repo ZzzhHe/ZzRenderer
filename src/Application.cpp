@@ -40,7 +40,7 @@ Application::Application() {
 	m_lights["DirectLight"] = std::make_shared<DirectLight>(
 		glm::vec3(-4.0f, -4.0f, 0.0f),
 		glm::vec4(1.0f, 1.0f, 1.0f, 1.0f),
-		glm::vec4(1.0f, 1.0f, 1.0f, 0.0f));
+		glm::vec4(1.0f, 1.0f, 1.0f, 0.1f));
 
 	// m_lights["PointLight"] = std::make_shared<PointLight>(
 	// 	glm::vec3(2.0f, 2.0f, 0.0f), 
@@ -129,8 +129,9 @@ void Application::run() {
 	glm::mat4 viewMatrix = glm::mat4(1.0f);
 	glm::mat4 projectionMatrix = glm::mat4(1.0f);
 
+	ShadowUniform shadowUniform = {glm::mat4(1.0f), glm::mat4(1.0f)};
+	
 	std::string currentFramebuffer = "PassThrough";
-
     
     float deltaTime = 0.0f;
     float lastFrame = 0.0f;
@@ -155,19 +156,17 @@ void Application::run() {
 		m_ubos["UboCamera"]->addData(m_camera->getCameraPos());
 		m_ubos["UboCamera"]->flush();
 
-		ShadowUniform shadowUniform = {glm::mat4(1.0f), glm::mat4(1.0f)};
 
 		// render
 		// shadow map
 		m_renderer.enable(GL_DEPTH_TEST);
-		m_renderer.clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		m_renderer.clear( GL_DEPTH_BUFFER_BIT);
 		m_renderer.setViewport(1024, 1024);
 		m_shadowmaps["DirectLight"]->setupDirectLight(std::static_pointer_cast<DirectLight>(m_lights["DirectLight"]));
 		for (unsigned int i = 0; i < m_current_id; i ++) {
 			m_shadowmaps["DirectLight"]->render(m_models[i], shadowUniform);
 		}
 		
-
 		// main render
 		for (unsigned int i = 0; i < m_current_id; i ++) {
 			m_models[i]->setShader(m_shaders["main"]);

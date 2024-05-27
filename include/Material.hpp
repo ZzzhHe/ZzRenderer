@@ -34,6 +34,7 @@ public:
         }
 		shader->use();
 		shader->setMat4("model", uniformData.model);
+		shader->setMat4("lightSpaceMatrix", uniformData.lightSpaceMatrix);
         
         int pointLightCount = 0;
         int directLightCount = 0;
