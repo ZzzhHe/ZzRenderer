@@ -14,8 +14,8 @@
 #include <string>
 #include <iostream>
 
-const int Application::WIDTH = 1600;
-const int Application::HEIGHT = 1200;
+const int Application::WIDTH = 800;
+const int Application::HEIGHT = 600;
 
 Application::model_id_t Application::m_current_id = 0;
 
@@ -33,12 +33,14 @@ Application::Application() {
 	m_shaders["passthrough"] = std::make_shared<Shader>("shader/passthrough.vert", "shader/passthrough.frag");
 	m_shaders["nightvision"] = std::make_shared<Shader>("shader/nightvision.vert", "shader/nightvision.frag");
 	m_shaders["shadow"] = std::make_shared<Shader>("shader/shadow.vert", "shader/shadow.frag");
+
+	m_shaders["shadowDebug"] = std::make_shared<Shader>("shader/shadowDebug.vert", "shader/shadowDebug.frag");
 	
 	// light
 	m_lights["DirectLight"] = std::make_shared<DirectLight>(
-		glm::vec3(4.0f, -2.0f, 0.0f),
+		glm::vec3(-4.0f, -4.0f, 0.0f),
 		glm::vec4(1.0f, 1.0f, 1.0f, 1.0f),
-		glm::vec4(1.0f, 1.0f, 1.0f, 0.1f));
+		glm::vec4(1.0f, 1.0f, 1.0f, 0.0f));
 
 	// m_lights["PointLight"] = std::make_shared<PointLight>(
 	// 	glm::vec3(2.0f, 2.0f, 0.0f), 
@@ -105,7 +107,17 @@ Application::Application() {
 	// shadow map
 	m_shadowmaps["DirectLight"] = std::make_shared<ShadowMap>(1024, 1024, LightType::Direct);
 	m_shadowmaps["DirectLight"]->setShader(m_shaders["shadow"]);
-	m_shadowmaps["DirectLight"]->setupDirectLight(std::static_pointer_cast<DirectLight>(m_lights["DirectLight"]));
+
+	m_framebuffers["ShadowDebug"] = std::make_shared<Framebuffer>(WIDTH * 2, HEIGHT * 2, "ShadowDebugTexture");
+	m_framebuffers["ShadowDebug"]->setShader(m_shaders["shadowDebug"]);
+	m_framebuffers["ShadowDebug"]->bind();
+	m_framebuffers["ShadowDebug"]->attachTexture();
+	m_framebuffers["ShadowDebug"]->debug_setTexture(m_shadowmaps["DirectLight"]->getDepthMapTexture());
+	m_framebuffers["ShadowDebug"]->attachRenderBuffer();
+	if (!m_framebuffers["ShadowDebug"]->checkStatus()) {
+		throw std::runtime_error("Framebuffer is not complete!");
+	}
+	m_framebuffers["ShadowDebug"]->unbind();
 }
 
 Application::~Application() {
@@ -148,8 +160,9 @@ void Application::run() {
 		// render
 		// shadow map
 		m_renderer.enable(GL_DEPTH_TEST);
-		m_renderer.clear(GL_DEPTH_BUFFER_BIT);
-		m_renderer.setViewport(1024 * 2, 1024 * 2);
+		m_renderer.clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		m_renderer.setViewport(1024, 1024);
+		m_shadowmaps["DirectLight"]->setupDirectLight(std::static_pointer_cast<DirectLight>(m_lights["DirectLight"]));
 		for (unsigned int i = 0; i < m_current_id; i ++) {
 			m_shadowmaps["DirectLight"]->render(m_models[i], shadowUniform);
 		}
@@ -220,6 +233,13 @@ void Application::loadRenderObjects() {
 	model->setModelMatrix(modelMatrix);
 	m_models.emplace(m_current_id, model);
 	m_current_id++;
-//	
+
+	model = std::make_shared<Model>("resource/model/plane/plane.obj");
+	modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -1.5f, 0.0f));
+	modelMatrix = glm::scale(modelMatrix, glm::vec3(4.0f));
+	model->setModelMatrix(modelMatrix);
+	m_models.emplace(m_current_id, model);
+	m_current_id++;
+
 
 }

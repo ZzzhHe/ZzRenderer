@@ -11,6 +11,7 @@ public:
     ~Framebuffer();
 
     void attachTexture();
+    void debug_setTexture(std::shared_ptr<Texture> texture);
 
     void attachRenderBuffer();
 

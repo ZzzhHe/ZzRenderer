@@ -27,7 +27,7 @@ private:
 	GLuint m_shadowFBO;
 	unsigned int m_width, m_height;
     std::shared_ptr<Texture> m_texture;
-    unsigned int m_depthMap;
+    GLuint m_depthMap;
     LightType m_lightType;
     std::vector<glm::mat4> m_lightSpaceMatrices;
     std::shared_ptr<Shader> m_shader;

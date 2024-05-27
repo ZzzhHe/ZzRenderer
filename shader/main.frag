@@ -57,7 +57,6 @@ void main() {
 	vec3 viewDir = normalize(viewPos - fs_in.FragPos);
 	vec4 direct_light_color = vec4(0.0);
 	float shadow = ShadowCalculation(fs_in.FragPosLightSpace);
-	shadow = 0.0;
 	for (int i = 0; i < numDirectLights; i ++) {
 		direct_light_color += CalcDirectLight(directLight[i], normal, viewDir, shadow);
 	}
@@ -127,7 +126,7 @@ float ShadowCalculation(vec4 fragPosLightSpace) {
     // perform perspective divide
     vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
     // transform to [0,1] range
-    projCoords = projCoords * 0.5 + 0.5;
+    projCoords = projCoords * 0.5 + 0.5;	
     // get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
     float closestDepth = texture(shadowMap, projCoords.xy).r; 
     // get depth of current fragment from light's perspective

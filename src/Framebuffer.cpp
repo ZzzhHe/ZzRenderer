@@ -59,6 +59,10 @@ void Framebuffer::attachTexture() {
     GLCall(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_texture->id(), 0));
 }
 
+void Framebuffer::debug_setTexture(std::shared_ptr<Texture> texture) {
+    m_texture = texture;
+}
+
 void Framebuffer::attachRenderBuffer() {
     // generate RenderBuffer
     GLCall(glGenRenderbuffers(1, &m_rbo));
