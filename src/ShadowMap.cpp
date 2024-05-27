@@ -29,6 +29,7 @@ ShadowMap::ShadowMap(int width, int height, LightType lightType)
 }
 
 ShadowMap::~ShadowMap() {
+	GLCall(glDeleteFramebuffers(1, &m_shadowFBO));
 }
 
 void ShadowMap::setupDirectLight(const std::shared_ptr<DirectLight>& directLight) {
@@ -45,15 +46,17 @@ void ShadowMap::setupDirectLight(const std::shared_ptr<DirectLight>& directLight
 }
 
 
-void ShadowMap::render(std::shared_ptr<Model> model, ShadowUniform& uniformData) {
+void ShadowMap::render(std::unordered_map<uint32_t, std::shared_ptr<Model>>& models, ShadowUniform& uniformData) {
 	bindFramebuffer();
-	// GLCall(glCullFace(GL_FRONT));
-//	GLCall(glViewport(0, 0, m_width, m_height));
-//	GLCall(glClear(GL_DEPTH_BUFFER_BIT));
+	GLCall(glClear(GL_DEPTH_BUFFER_BIT));
+	GLCall(glCullFace(GL_FRONT));
     uniformData.lightSpaceMatrix = m_lightSpaceMatrices[0];
-    model->setShader(m_shader);
-    model->render(uniformData);
-	// GLCall(glCullFace(GL_BACK));
+	for (auto& kv: models) {
+		auto& model = kv.second;
+		model->setShader(m_shader);
+		model->render(uniformData);
+	}
+	GLCall(glCullFace(GL_BACK));
 	unbindFramebuffer();
 }
 

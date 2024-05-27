@@ -105,7 +105,7 @@ Application::Application() {
 	m_framebuffers["NightVision"]->unbind();
 
 	// shadow map
-	m_shadowmaps["DirectLight"] = std::make_shared<ShadowMap>(1024, 1024, LightType::Direct);
+	m_shadowmaps["DirectLight"] = std::make_shared<ShadowMap>(1024 * 2, 1024 * 2, LightType::Direct);
 	m_shadowmaps["DirectLight"]->setShader(m_shaders["shadow"]);
 
 	m_framebuffers["ShadowDebug"] = std::make_shared<Framebuffer>(WIDTH * 2, HEIGHT * 2, "ShadowDebugTexture");
@@ -158,14 +158,14 @@ void Application::run() {
 
 
 		// render
-		// shadow map
 		m_renderer.enable(GL_DEPTH_TEST);
-		m_renderer.clear( GL_DEPTH_BUFFER_BIT);
-		m_renderer.setViewport(1024, 1024);
+		m_renderer.clearColor(0.47f, 0.53f, 0.6f, 1.0f);
+        m_renderer.clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		// shadow map
+		m_renderer.setViewport(1024 * 2, 1024 * 2);
 		m_shadowmaps["DirectLight"]->setupDirectLight(std::static_pointer_cast<DirectLight>(m_lights["DirectLight"]));
-		for (unsigned int i = 0; i < m_current_id; i ++) {
-			m_shadowmaps["DirectLight"]->render(m_models[i], shadowUniform);
-		}
+		m_shadowmaps["DirectLight"]->render(m_models, shadowUniform);
 		
 		// main render
 		for (unsigned int i = 0; i < m_current_id; i ++) {
@@ -174,11 +174,9 @@ void Application::run() {
 
 		m_framebuffers[currentFramebuffer]->bind();
 
-		m_renderer.enable(GL_DEPTH_TEST);
-		m_renderer.clearColor(0.47f, 0.53f, 0.6f, 1.0f);
-        m_renderer.clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		m_renderer.setViewport(WIDTH * 2, HEIGHT * 2);
-
+		m_renderer.enable(GL_DEPTH_TEST);
+        m_renderer.clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
 		m_uniform = {
 			glm::mat4(1.0f),

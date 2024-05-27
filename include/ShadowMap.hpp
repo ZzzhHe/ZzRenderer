@@ -17,7 +17,7 @@ public:
 
     void setShader(std::shared_ptr<Shader> shader);
 
-    void render(std::shared_ptr<Model> model, ShadowUniform& uniformData);
+    void render(std::unordered_map<uint32_t, std::shared_ptr<Model>>& models, ShadowUniform& uniformData);
 
 	std::shared_ptr<Texture> getDepthMapTexture() const;
     const std::vector<glm::mat4>& getLightSpaceMatrices() const;
