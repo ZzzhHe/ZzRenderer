@@ -14,8 +14,8 @@
 #include <string>
 #include <iostream>
 
-const int Application::WIDTH = 800;
-const int Application::HEIGHT = 600;
+const int Application::WIDTH = 1200;
+const int Application::HEIGHT = 900;
 
 Application::model_id_t Application::m_current_id = 0;
 
@@ -38,9 +38,9 @@ Application::Application() {
 	
 	// light
 	m_lights["DirectLight"] = std::make_shared<DirectLight>(
-		glm::vec3(-4.0f, -4.0f, 0.0f),
+		glm::vec3(-3.0f, -3.0f, -3.0f),
 		glm::vec4(1.0f, 1.0f, 1.0f, 1.0f),
-		glm::vec4(1.0f, 1.0f, 1.0f, 0.1f));
+		glm::vec4(1.0f, 1.0f, 1.0f, 0.2f));
 
 	// m_lights["PointLight"] = std::make_shared<PointLight>(
 	// 	glm::vec3(2.0f, 2.0f, 0.0f), 
@@ -220,20 +220,33 @@ void Application::loadRenderObjects() {
 //	m_current_id++;
 	
 	auto model = std::make_shared<Model>("resource/model/jam/jam.obj");
-	modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(-2.0f, -1.0f, 0.0f));
+	modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
 	model->setModelMatrix(modelMatrix);
 	m_models.emplace(m_current_id, model);
 	m_current_id++;
 	
+	modelMatrix = glm::mat4(1.0f);
 	model = std::make_shared<Model>("resource/model/nuka_cup/nuka_cup.obj");
-	modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(2.0f, 0.0f, 0.0f));
+	modelMatrix = glm::scale(modelMatrix, glm::vec3(0.5f));
+	modelMatrix = glm::translate(modelMatrix, glm::vec3(2.5f, 0.5f, 0.0f));
+	modelMatrix = glm::rotate(modelMatrix, glm::radians(45.0f), glm::vec3(0.0f, 0.0f, -30.0f));
 	model->setModelMatrix(modelMatrix);
 	m_models.emplace(m_current_id, model);
 	m_current_id++;
 
+	modelMatrix = glm::mat4(1.0f);
 	model = std::make_shared<Model>("resource/model/plane/plane.obj");
-	modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -1.5f, 0.0f));
-	modelMatrix = glm::scale(modelMatrix, glm::vec3(4.0f));
+	modelMatrix = glm::scale(modelMatrix, glm::vec3(10.0f));
+	modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, 0.0f, 0.0f));
+	model->setModelMatrix(modelMatrix);
+	m_models.emplace(m_current_id, model);
+	m_current_id++;
+
+	modelMatrix = glm::mat4(1.0f);
+	model = std::make_shared<Model>("resource/model/stone_wall/stone_wall.obj");
+	modelMatrix = glm::scale(modelMatrix, glm::vec3(5.0f));
+	modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, 0.0f, -3.0f));
+	modelMatrix = glm::rotate(modelMatrix, glm::radians(-45.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	model->setModelMatrix(modelMatrix);
 	m_models.emplace(m_current_id, model);
 	m_current_id++;
