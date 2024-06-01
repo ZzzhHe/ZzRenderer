@@ -106,6 +106,27 @@ Texture::Texture(const unsigned int width, const unsigned int height, TextureTyp
     }
 }
 
+Texture::Texture(const unsigned int width, const unsigned int height, const unsigned int shadowCascadeLevelCount, const TextureType type)
+    : m_RendererID(0), m_Type(type), m_Width(width), m_Height(height), m_BPP(0) {
+    if (type != TextureType::Array_2D) {
+        throw std::runtime_error("Cascade Shadow Texture type should be Array_2D!");
+    }
+    
+    GLCall(glGenTextures(1, &m_RendererID));
+    GLCall(glBindTexture(GL_TEXTURE_2D_ARRAY, m_RendererID));
+
+    GLCall(glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_DEPTH_COMPONENT32F, 
+        m_Width, m_Height, shadowCascadeLevelCount, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL));
+
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+
+    constexpr float bordercolor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+    glTexParameterfv(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_BORDER_COLOR, bordercolor);
+}
+
 Texture::~Texture() {
     GLCall(glDeleteTextures(1, &m_RendererID));
 }
@@ -116,6 +137,11 @@ void Texture::bind(const unsigned int slot) const {
 		GLCall(glBindTexture(GL_TEXTURE_CUBE_MAP, m_RendererID));
 		return;
 	}
+    if (m_Type == TextureType::Array_2D) {
+        GLCall(glActiveTexture(GL_TEXTURE0 + slot));
+        GLCall(glBindTexture(GL_TEXTURE_2D_ARRAY, m_RendererID));
+        return;
+    }
     GLCall(glActiveTexture(GL_TEXTURE0 + slot));
     GLCall(glBindTexture(GL_TEXTURE_2D, m_RendererID));
 }

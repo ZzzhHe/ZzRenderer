@@ -3,6 +3,7 @@
 
 #include <glm/gtc/type_ptr.hpp>
 
+#include <vector>
 #include <fstream>
 #include <sstream>  
 #include <iostream>
@@ -176,6 +177,13 @@ void Shader::setFloat(const std::string &name, const float value) {
 
 void Shader::setMat4(const std::string &name, const glm::mat4 &value) {
     GLCall(glUniformMatrix4fv(GetUniformLocation(name), 1, GL_FALSE, glm::value_ptr(value)));
+}
+
+void Shader::setMat4Array(const std::string &name, const std::vector<glm::mat4> &value) {
+    for (unsigned int i = 0; i < value.size(); ++i) {
+        std::string newName = name + "[" + std::to_string(i) + "]";
+        GLCall(glUniformMatrix4fv(GetUniformLocation(newName), 1, GL_FALSE, glm::value_ptr(value[i])));
+    }
 }
 
 void Shader::setVec3(const std::string &name, const glm::vec3 &value) {

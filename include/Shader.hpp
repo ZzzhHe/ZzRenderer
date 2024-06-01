@@ -31,6 +31,7 @@ public:
     void setUInt(const std::string &name, unsigned int value);
     void setFloat(const std::string &name, const float value);
     void setMat4(const std::string &name, const glm::mat4 &value);
+    void setMat4Array(const std::string &name, const std::vector<glm::mat4> &value);
     void setVec3(const std::string &name, const glm::vec3 &value);
     void setVec2(const std::string &name, glm::vec2 &value);
     void setVec4(const std::string &name, const glm::vec4 &value);

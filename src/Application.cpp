@@ -33,7 +33,7 @@ Application::Application() {
 	m_shaders["passthrough"] = std::make_shared<Shader>("shader/passthrough.vert", "shader/passthrough.frag");
 	m_shaders["nightvision"] = std::make_shared<Shader>("shader/nightvision.vert", "shader/nightvision.frag");
 	m_shaders["shadow"] = std::make_shared<Shader>("shader/shadow.vert", "shader/shadow.frag");
-
+	m_shaders["cascadeShadow"] = std::make_shared<Shader>("shader/cascade_shadow.vert", "shader/cascade_shadow.geom", "shader/cascade_shadow.frag");
 	m_shaders["shadowDebug"] = std::make_shared<Shader>("shader/shadowDebug.vert", "shader/shadowDebug.frag");
 	
 	// light
@@ -46,11 +46,6 @@ Application::Application() {
 	// 	glm::vec3(2.0f, 2.0f, 0.0f), 
 	// 	glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), 
 	// 	glm::vec4(1.0f, 1.0f, 1.0f, 0.2f));
-
-	// uniform buffer objects
-	m_ubos["UboCamera"] = std::make_shared<Ubo>("UboCamera", sizeof(UboCamera));
-	m_ubos["UboCamera"]->uniformBlockBindingPoint(*m_shaders["main"], 0);
-	m_ubos["UboCamera"]->bindBufferToBindingPoint(0);
 
 	// model and skybox
 	loadRenderObjects();
@@ -108,6 +103,12 @@ Application::Application() {
 	m_shadowmaps["DirectLight"] = std::make_shared<ShadowMap>(1024 * 2, 1024 * 2, LightType::Direct);
 	m_shadowmaps["DirectLight"]->setShader(m_shaders["shadow"]);
 
+	std::vector<float> shadowCascadeLevels = { 100.0f / 50.0f, 100.0f / 25.0f, 100.0f / 10.0f, 100.0f / 2.0f };
+	m_shadowmaps["CascadeShadow"] = std::make_shared<ShadowMap>(1024 * 4, 1024 * 4, 4, shadowCascadeLevels, LightType::Direct);
+	m_shadowmaps["CascadeShadow"]->setShader(m_shaders["cascadeShadow"]);
+	m_shadowmaps["CascadeShadow"]->setup(m_camera, std::static_pointer_cast<DirectLight>(m_lights["DirectLight"]));
+
+
 	m_framebuffers["ShadowDebug"] = std::make_shared<Framebuffer>(WIDTH * 2, HEIGHT * 2, "ShadowDebugTexture");
 	m_framebuffers["ShadowDebug"]->setShader(m_shaders["shadowDebug"]);
 	m_framebuffers["ShadowDebug"]->bind();
@@ -118,6 +119,12 @@ Application::Application() {
 		throw std::runtime_error("Framebuffer is not complete!");
 	}
 	m_framebuffers["ShadowDebug"]->unbind();
+
+	// uniform buffer objects
+	m_ubos["UboCamera"] = std::make_shared<Ubo>("UboCamera", sizeof(UboCamera));
+	m_ubos["UboCamera"]->uniformBlockBindingPoint(*m_shaders["main"], 0);
+	m_ubos["UboCamera"]->bindBufferToBindingPoint(0);
+
 }
 
 Application::~Application() {
@@ -129,7 +136,7 @@ void Application::run() {
 	glm::mat4 viewMatrix = glm::mat4(1.0f);
 	glm::mat4 projectionMatrix = glm::mat4(1.0f);
 
-	ShadowUniform shadowUniform = {glm::mat4(1.0f), glm::mat4(1.0f)};
+	ShadowUniform shadowUniform = {glm::mat4(1.0f), };
 	
 	std::string currentFramebuffer = "PassThrough";
     
@@ -163,9 +170,11 @@ void Application::run() {
         m_renderer.clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// shadow map
-		m_renderer.setViewport(1024 * 2, 1024 * 2);
-		m_shadowmaps["DirectLight"]->setupDirectLight(std::static_pointer_cast<DirectLight>(m_lights["DirectLight"]));
-		m_shadowmaps["DirectLight"]->render(m_models, shadowUniform);
+		m_renderer.setViewport(1024 * 4, 1024 * 4);
+		// m_shadowmaps["DirectLight"]->setupDirectLight(std::static_pointer_cast<DirectLight>(m_lights["DirectLight"]));
+		// m_shadowmaps["DirectLight"]->render(m_models, shadowUniform);
+		m_shadowmaps["CascadeShadow"]->setup(m_camera, std::static_pointer_cast<DirectLight>(m_lights["DirectLight"]));
+		m_shadowmaps["CascadeShadow"]->render(m_models, shadowUniform);
 		
 		// main render
 		for (unsigned int i = 0; i < m_current_id; i ++) {
@@ -250,6 +259,4 @@ void Application::loadRenderObjects() {
 	model->setModelMatrix(modelMatrix);
 	m_models.emplace(m_current_id, model);
 	m_current_id++;
-
-
 }

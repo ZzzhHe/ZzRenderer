@@ -1,3 +1,4 @@
+#pragma once
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -22,7 +23,13 @@ class Camera {
 public:
 	virtual glm::vec3 getCameraPos() const {return glm::vec3(0.0f);};
 	virtual glm::mat4 getViewMatrix() const {return glm::mat4(1.0f);};
-	virtual glm::mat4 getProjectionMatrix(float aspectRatio) const {return glm::mat4(1.0f);};
+	virtual glm::mat4 getProjectionMatrix(float aspectRatio) {
+        m_aspectRatio = aspectRatio;
+        return glm::mat4(1.0f);
+        };
+    virtual float getAspectRatio() const {return m_aspectRatio;};
+protected:
+    float m_aspectRatio;
 };
 
 // Camera class for FPS-like controls
@@ -62,7 +69,8 @@ public:
     glm::mat4 getViewMatrix() const override{
         return glm::lookAt(Position, Position + Front, Up);
     }
-    glm::mat4 getProjectionMatrix(float aspectRatio) const override{
+    glm::mat4 getProjectionMatrix(float aspectRatio) override{
+        m_aspectRatio = aspectRatio;
         return glm::perspective(glm::radians(Zoom), aspectRatio, 0.1f, 100.0f);
     }
 
@@ -93,7 +101,8 @@ public:
         return glm::lookAt(position, Target, glm::vec3(0.0f, 1.0f, 0.0f));
     }
 
-    glm::mat4 getProjectionMatrix(float aspectRatio) const override{
+    glm::mat4 getProjectionMatrix(float aspectRatio) override{
+        m_aspectRatio = aspectRatio;
         return glm::perspective(glm::radians(45.0f), aspectRatio, 0.1f, 100.0f);
     }
 

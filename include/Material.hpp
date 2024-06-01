@@ -77,6 +77,6 @@ public:
         }
         shader->use();
         shader->setMat4("model", uniformData.model);
-        shader->setMat4("lightSpaceMatrix", uniformData.lightSpaceMatrix);
+        shader->setMat4Array("lightSpaceMatrix", uniformData.lightSpaceMatrices);
     };
 };
