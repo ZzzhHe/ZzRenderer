@@ -14,6 +14,12 @@ Shader::Shader(const std::string &vertpath, const std::string &fragpath)
     m_rendererID = CreateShader(source.VertexSource, source.FragmentSource);
 }
 
+Shader::Shader(const std::string &vertpath, const std::string& geompath, const std::string &fragpath) 
+: m_rendererID(0), m_vertPath(vertpath), m_geomPath(geompath), m_fragPath(fragpath) {
+    ShaderProgramSource source = ParseShader(vertpath, geompath, fragpath);
+    m_rendererID = CreateShader(source.VertexSource, source.GeometrySource, source.FragmentSource);
+}
+
 Shader::~Shader() {
     GLCall(glDeleteProgram(m_rendererID));
 }
@@ -39,7 +45,37 @@ ShaderProgramSource Shader::ParseShader(const std::string &vertpath, const std::
         ss_fragment << line << '\n';
     }
 
-    return {ss_vertex.str(), ss_fragment.str()};
+    return {ss_vertex.str(), "", ss_fragment.str()};
+}
+
+ShaderProgramSource Shader::ParseShader(const std::string &vertpath, const std::string &geompath, const std::string &fragpath) {
+    std::ifstream stream_vertex(vertpath);
+    std::ifstream stream_geometry(geompath);
+    std::ifstream stream_fragment(fragpath);
+
+    if (!stream_vertex.is_open() || !stream_fragment.is_open() || !stream_geometry.is_open()) {
+        throw std::runtime_error("Failed to open shader file");
+    }
+
+    std::string line;
+
+    std::stringstream ss_vertex;
+    std::stringstream ss_geometry;
+    std::stringstream ss_fragment;
+
+    while (getline(stream_vertex, line)) {
+        ss_vertex << line << '\n';
+    }
+
+    while (getline(stream_geometry, line)) {
+        ss_geometry << line << '\n';
+    }
+
+    while (getline(stream_fragment, line)) {
+        ss_fragment << line << '\n';
+    }
+
+    return {ss_vertex.str(), ss_geometry.str(), ss_fragment.str()};
 }
 
 unsigned int Shader::CompileShader(unsigned int type, const std::string& source) {
@@ -77,6 +113,27 @@ GLuint Shader::CreateShader(const std::string& vertexShader, const std::string& 
 
     // delete shader objects after using
     GLCall(glDeleteShader(vs));
+    GLCall(glDeleteProgram(fs));
+
+    return program;
+}
+
+GLuint Shader::CreateShader(const std::string& vertexShader, const std::string& geometryShaders, const std::string& fragmentShader) {
+    GLCall(GLuint program = glCreateProgram());
+    GLCall(GLuint vs = CompileShader(GL_VERTEX_SHADER, vertexShader));
+    GLCall(GLuint gs = CompileShader(GL_GEOMETRY_SHADER, geometryShaders));
+    GLCall(GLuint fs = CompileShader(GL_FRAGMENT_SHADER, fragmentShader));
+    
+    // attach and link reviously compiled shaders to the program object
+    GLCall(glAttachShader(program, vs));
+    GLCall(glAttachShader(program, gs));
+    GLCall(glAttachShader(program, fs));
+    GLCall(glLinkProgram(program));
+    GLCall(glValidateProgram(program));
+
+    // delete shader objects after using
+    GLCall(glDeleteShader(vs));
+    GLCall(glDeleteProgram(gs));
     GLCall(glDeleteProgram(fs));
 
     return program;

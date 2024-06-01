@@ -10,6 +10,7 @@
 struct ShaderProgramSource
 {
     std::string VertexSource;
+    std::string GeometrySource;
     std::string FragmentSource;
 };
 
@@ -17,6 +18,7 @@ class Shader
 {
 public:
     Shader(const std::string &vertpath, const std::string &fragpath);
+    Shader(const std::string &vertpath, const std::string& geompath, const std::string &fragpath);
     ~Shader();
 
     GLuint id() const { return m_rendererID; }
@@ -35,14 +37,17 @@ public:
 
 private:
     ShaderProgramSource ParseShader(const std::string &vertpath, const std::string &fragpath);
+    ShaderProgramSource ParseShader(const std::string &vertpath, const std::string &geompath, const std::string &fragpath);
     unsigned int CompileShader(unsigned int type, const std::string &source);
     GLuint CreateShader(const std::string &vertexShader, const std::string &fragmentShader);
+    GLuint CreateShader(const std::string &vertexShader, const std::string &geometryShader, const std::string &fragmentShader);
 
     int GetUniformLocation(const std::string &name);
 
 private:
     GLuint m_rendererID;
     std::string m_vertPath;
+    std::string m_geomPath;
     std::string m_fragPath;
     std::unordered_map<std::string, int> m_uniformLocationCache;
 };
