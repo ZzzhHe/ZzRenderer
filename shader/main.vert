@@ -9,7 +9,7 @@ layout(location = 4) in vec3 aBitangent;
 out VS_OUT {
     vec2 TexCoords;
     vec3 FragPos;
-    vec4 FragPosLightSpace;
+	vec3 Normal;
     mat3 TBN;
 } vs_out;
 
@@ -20,12 +20,11 @@ layout (std140) uniform UboCamera {
 };
 
 uniform mat4 model;
-uniform mat4 lightSpaceMatrix;
 
 void main() {
     vs_out.TexCoords = aTexCoord;
     vs_out.FragPos = vec3(model * vec4(aPos, 1.0));
-    vs_out.FragPosLightSpace = lightSpaceMatrix * vec4(vs_out.FragPos, 1.0);
+//    vs_out.FragPosLightSpace = lightSpaceMatrix * vec4(vs_out.FragPos, 1.0);
     gl_Position = projection * view * vec4(vs_out.FragPos, 1.0);
 
     vec3 N = normalize(vec3(model * vec4(aNormal,    0.0)));
@@ -35,6 +34,7 @@ void main() {
     // T = normalize(T - dot(T, N) * N);
     // then retrieve perpendicular vector B with the cross product of T and N
     // vec3 B = cross(N, T);
-
+	
+	vs_out.Normal = N;
     vs_out.TBN = mat3(T, B, N);
 }

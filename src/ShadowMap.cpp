@@ -2,6 +2,7 @@
 
 
 #include <glm/gtc/matrix_transform.hpp>
+#include <vector>
 
 ShadowMap::ShadowMap(int width, int height, LightType lightType) 
     : m_width(width), m_height(height), m_lightType(lightType) {
@@ -51,7 +52,7 @@ ShadowMap::~ShadowMap() {
 
 void ShadowMap::setupDirectLight(const std::shared_ptr<DirectLight>& directLight) {
     glm::vec3 lightPos = directLight->direction * -6.0f; // TODO : not sure about this
-    glm::mat4 lightProjection = glm::ortho(-40.0f, 40.0f, -40.0f, 40.0f, 0.1f, 100.0f);
+    glm::mat4 lightProjection = glm::ortho(-40.0f, 40.0f, -40.0f, 40.0f, 0.1f, 200.0f);
     glm::mat4 lightView = glm::lookAt(lightPos, glm::vec3(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
     if (m_lightSpaceMatrices.size() == 0) {
 		m_lightSpaceMatrices.push_back(lightProjection * lightView);
@@ -63,7 +64,7 @@ void ShadowMap::setupDirectLight(const std::shared_ptr<DirectLight>& directLight
 void ShadowMap::setup(const std::shared_ptr<Camera>& camera, const std::shared_ptr<DirectLight>& directLight) {
     m_camera = camera;
     m_directLight = directLight;
-    m_lightSpaceMatrices = getLightSpaceMatrices_Cascade();
+    getLightSpaceMatrices_Cascade();
 }
 
 
@@ -144,6 +145,7 @@ std::vector<glm::vec4> ShadowMap::getFrustumCornersWorldSpace(const glm::mat4& p
             }
         }
 	}
+	return frustumCorners;
 }
 
 // TODO: proj, view, near, far and light direction
@@ -197,17 +199,17 @@ glm::mat4 ShadowMap::getLightSpaceMatrix(float near, float far) const  {
 
 // TODO: shadowCascadeLevels save the near and far plane of each cascade
 
-const std::vector<glm::mat4>& ShadowMap::getLightSpaceMatrices_Cascade() const {
-
-    std::vector<glm::mat4> ret;
+void ShadowMap::getLightSpaceMatrices_Cascade() {
+	
+	std::vector<glm::mat4> mat;
     for (size_t i = 0; i < m_shadowCascadeLevels.size() + 1; ++i) {
         if (i == 0) {
-            ret.push_back(getLightSpaceMatrix(0.1f, m_shadowCascadeLevels[i]));
+			mat.push_back(getLightSpaceMatrix(0.1f, m_shadowCascadeLevels[i]));
         } else if (i < m_shadowCascadeLevels.size()) {
-            ret.push_back(getLightSpaceMatrix(m_shadowCascadeLevels[i - 1], m_shadowCascadeLevels[i]));
+			mat.push_back(getLightSpaceMatrix(m_shadowCascadeLevels[i - 1], m_shadowCascadeLevels[i]));
         } else {
-            ret.push_back(getLightSpaceMatrix(m_shadowCascadeLevels[i - 1], 100.0f));
+			mat.push_back(getLightSpaceMatrix(m_shadowCascadeLevels[i - 1], 200.0f));
         }
     }
-    return ret;
+	m_lightSpaceMatrices = mat;
 }

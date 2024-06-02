@@ -34,7 +34,9 @@ public:
         }
 		shader->use();
 		shader->setMat4("model", uniformData.model);
-		shader->setMat4("lightSpaceMatrix", uniformData.lightSpaceMatrix);
+		shader->setMat4Array("lightSpaceMatrices", uniformData.lightSpaceMatrix);
+		shader->setInt("cascadeCount", uniformData.cascadeCount);
+		shader->setFloatArray("cascadePlaneDistances", uniformData.shadowCascadeLevels);
         
         int pointLightCount = 0;
         int directLightCount = 0;
@@ -77,6 +79,6 @@ public:
         }
         shader->use();
         shader->setMat4("model", uniformData.model);
-        shader->setMat4Array("lightSpaceMatrix", uniformData.lightSpaceMatrices);
+        shader->setMat4Array("lightSpaceMatrices", uniformData.lightSpaceMatrices);
     };
 };

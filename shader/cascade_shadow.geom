@@ -3,13 +3,13 @@
 layout(triangles, invocations = 5) in;
 layout(triangle_strip, max_vertices = 3) out;
 
-layout (std140) uniform LightSpaceMatrices
-{
-    mat4 lightSpaceMatrices[16];
-};
-/*
+//layout (std140) uniform lightSpaceMatrices
+//{
+//    mat4 lightSpaceMatrices[16];
+//};
+
 uniform mat4 lightSpaceMatrices[16];
-*/
+
 
 void main()
 {          

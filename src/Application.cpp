@@ -100,11 +100,13 @@ Application::Application() {
 	m_framebuffers["NightVision"]->unbind();
 
 	// shadow map
-	m_shadowmaps["DirectLight"] = std::make_shared<ShadowMap>(1024 * 2, 1024 * 2, LightType::Direct);
-	m_shadowmaps["DirectLight"]->setShader(m_shaders["shadow"]);
-
-	std::vector<float> shadowCascadeLevels = { 100.0f / 50.0f, 100.0f / 25.0f, 100.0f / 10.0f, 100.0f / 2.0f };
-	m_shadowmaps["CascadeShadow"] = std::make_shared<ShadowMap>(1024 * 4, 1024 * 4, 4, shadowCascadeLevels, LightType::Direct);
+//	m_shadowmaps["DirectLight"] = std::make_shared<ShadowMap>(1024 * 2, 1024 * 2, LightType::Direct);
+//	m_shadowmaps["DirectLight"]->setShader(m_shaders["shadow"]);
+	
+	
+	std::vector<float> shadowCascadeLevels = { 200.0f / 50.0f, 200.0f / 25.0f, 200.0f / 10.0f, 200.0f / 2.0f };
+	unsigned int shadowCascadeLevel = static_cast<unsigned int>(shadowCascadeLevels.size()) + 1;
+	m_shadowmaps["CascadeShadow"] = std::make_shared<ShadowMap>(1024 * 4, 1024 * 4, shadowCascadeLevel, shadowCascadeLevels, LightType::Direct);
 	m_shadowmaps["CascadeShadow"]->setShader(m_shaders["cascadeShadow"]);
 	m_shadowmaps["CascadeShadow"]->setup(m_camera, std::static_pointer_cast<DirectLight>(m_lights["DirectLight"]));
 
@@ -113,7 +115,7 @@ Application::Application() {
 	m_framebuffers["ShadowDebug"]->setShader(m_shaders["shadowDebug"]);
 	m_framebuffers["ShadowDebug"]->bind();
 	m_framebuffers["ShadowDebug"]->attachTexture();
-	m_framebuffers["ShadowDebug"]->debug_setTexture(m_shadowmaps["DirectLight"]->getDepthMapTexture());
+	m_framebuffers["ShadowDebug"]->debug_setTexture(m_shadowmaps["CascadeShadow"]->getDepthMapTexture());
 	m_framebuffers["ShadowDebug"]->attachRenderBuffer();
 	if (!m_framebuffers["ShadowDebug"]->checkStatus()) {
 		throw std::runtime_error("Framebuffer is not complete!");
@@ -189,9 +191,11 @@ void Application::run() {
 		
 		m_uniform = {
 			glm::mat4(1.0f),
-			m_shadowmaps["DirectLight"]->getLightSpaceMatrices()[0],
-			m_shadowmaps["DirectLight"]->getDepthMapTexture(),
-			getValues(m_lights)
+			getValues(m_lights),
+			m_shadowmaps["CascadeShadow"]->getDepthMapTexture(),
+			m_shadowmaps["CascadeShadow"]->getCascadeLevelsCount(),
+			m_shadowmaps["CascadeShadow"]->getCascadeLevels(),
+			m_shadowmaps["CascadeShadow"]->getLightSpaceMatrices(),
 		};
 
         for (const auto& kv : m_models) {

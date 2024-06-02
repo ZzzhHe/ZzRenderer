@@ -71,7 +71,7 @@ public:
     }
     glm::mat4 getProjectionMatrix(float aspectRatio) override{
         m_aspectRatio = aspectRatio;
-        return glm::perspective(glm::radians(Zoom), aspectRatio, 0.1f, 100.0f);
+        return glm::perspective(glm::radians(Zoom), aspectRatio, 0.1f, 200.0f);
     }
 
 private:
@@ -103,7 +103,7 @@ public:
 
     glm::mat4 getProjectionMatrix(float aspectRatio) override{
         m_aspectRatio = aspectRatio;
-        return glm::perspective(glm::radians(45.0f), aspectRatio, 0.1f, 100.0f);
+        return glm::perspective(glm::radians(45.0f), aspectRatio, 0.1f, 200.0f);
     }
 
     void processMouseMovement(float xoffset, float yoffset);

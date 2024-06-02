@@ -4,9 +4,11 @@
 
 struct SharedUniform {
     glm::mat4 model;
-    glm::mat4 lightSpaceMatrix;
+	std::vector<std::shared_ptr<Light>> lights;
 	std::shared_ptr<Texture> shadowMap;
-    std::vector<std::shared_ptr<Light>> lights;
+	int cascadeCount;
+	std::vector<float> shadowCascadeLevels;
+	std::vector<glm::mat4> lightSpaceMatrix;
 };
 
 // struct ShadowUniform {

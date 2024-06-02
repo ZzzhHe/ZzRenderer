@@ -175,6 +175,13 @@ void Shader::setFloat(const std::string &name, const float value) {
     GLCall(glUniform1f(GetUniformLocation(name), value)); 
 }
 
+void Shader::setFloatArray(const std::string &name, const std::vector<float>& value){
+	for (unsigned int i = 0; i < value.size(); ++i) {
+		std::string newName = name + "[" + std::to_string(i) + "]";
+		GLCall(glUniform1f(GetUniformLocation(newName), value[i]));
+	}
+}
+
 void Shader::setMat4(const std::string &name, const glm::mat4 &value) {
     GLCall(glUniformMatrix4fv(GetUniformLocation(name), 1, GL_FALSE, glm::value_ptr(value)));
 }

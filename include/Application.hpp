@@ -6,7 +6,7 @@
 #include "Gui.hpp"
 #include "Skybox.hpp"
 #include "Ubo.hpp"
-#include "Framebuffer.hpp"
+#include "FrameBuffer.hpp"
 #include "ShadowMap.hpp"
 
 #include <unordered_map>

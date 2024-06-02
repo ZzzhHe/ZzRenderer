@@ -27,8 +27,12 @@ public:
     
 	std::shared_ptr<Texture> getDepthMapTexture() const;
     const std::vector<glm::mat4>& getLightSpaceMatrices() const;
-    const std::vector<glm::mat4>& getLightSpaceMatrices_Cascade() const;
+	void getLightSpaceMatrices_Cascade();
+	
+	
     std::shared_ptr<Shader> getShader() const { return m_shader; }
+	int getCascadeLevelsCount() const {return m_shadowCascadeLevelCount; }
+	std::vector<float> getCascadeLevels() {return m_shadowCascadeLevels; }
 
 private:
     glm::mat4 getLightSpaceMatrix(float nearPlane, float farPlane) const ;
