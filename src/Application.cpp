@@ -36,7 +36,8 @@ Application::Application() {
 	m_shaders["shadow"] = std::make_shared<Shader>("shader/shadow.vert", "shader/shadow.frag");
 	m_shaders["cascadeShadow"] = std::make_shared<Shader>("shader/cascade_shadow.vert", "shader/cascade_shadow.geom", "shader/cascade_shadow.frag");
 	m_shaders["shadowDebug"] = std::make_shared<Shader>("shader/shadowDebug.vert", "shader/shadowDebug.frag");
-	
+	m_shaders["hdr"] = std::make_shared<Shader>("shader/hdr.vert", "shader/hdr.frag");
+
 	// light
 	m_lights["DirectLight"] = std::make_shared<DirectLight>(
 		glm::vec3(-3.0f, -3.0f, -3.0f),
@@ -119,6 +120,15 @@ Application::Application() {
 		throw std::runtime_error("Framebuffer is not complete!");
 	}
 	m_framebuffers["ShadowDebug"]->unbind();
+
+	m_framebuffers["HDR"] = std::make_shared<Framebuffer>(WIDTH * 2, HEIGHT * 2, "HDRTexture");
+	m_framebuffers["HDR"]->setShader(m_shaders["hdr"]);
+	m_framebuffers["HDR"]->bind();
+	m_framebuffers["HDR"]->attachTexture();
+	m_framebuffers["HDR"]->attachRenderBuffer();
+	if (!m_framebuffers["HDR"]->checkStatus()) {
+		throw std::runtime_error("Framebuffer is not complete!");
+	}
 
 	// uniform buffer objects
 	m_ubos["UboCamera"] = std::make_shared<Ubo>("UboCamera", sizeof(UboCamera));
