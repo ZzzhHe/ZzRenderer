@@ -167,7 +167,9 @@ float ShadowCalculation(vec3 fragPos, vec3 normal, vec3 lightDir) {
 	} else {
 		bias *= 1 / (cascadePlaneDistances[layer] * biasModifier);
 	}
-
+	
+	bias *= 0.01;
+	
 	// PCF
 	float shadow = 0.0;
 	vec2 texelSize = 1.0 / vec2(textureSize(shadowMap, 0));
