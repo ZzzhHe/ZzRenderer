@@ -24,6 +24,7 @@ Application::Application() {
 	
 	// Camera
 	m_camera = std::make_shared<OrbitCamera>();
+	m_camera->setNearFarPlane(0.1f, 100.0f);
 	m_cameraController = std::make_shared<CameraController>(m_camera);
 	
 	// shader
@@ -100,11 +101,8 @@ Application::Application() {
 	m_framebuffers["NightVision"]->unbind();
 
 	// shadow map
-//	m_shadowmaps["DirectLight"] = std::make_shared<ShadowMap>(1024 * 2, 1024 * 2, LightType::Direct);
-//	m_shadowmaps["DirectLight"]->setShader(m_shaders["shadow"]);
-	
-	
-	std::vector<float> shadowCascadeLevels = { 200.0f / 50.0f, 200.0f / 25.0f, 200.0f / 10.0f, 200.0f / 2.0f };
+	float farPlane = m_camera->getFarPlane();
+	std::vector<float> shadowCascadeLevels = { farPlane / 50.0f, farPlane / 25.0f, farPlane / 10.0f, farPlane / 2.0f };
 	unsigned int shadowCascadeLevel = static_cast<unsigned int>(shadowCascadeLevels.size()) + 1;
 	m_shadowmaps["CascadeShadow"] = std::make_shared<ShadowMap>(1024 * 4, 1024 * 4, shadowCascadeLevel, shadowCascadeLevels, LightType::Direct);
 	m_shadowmaps["CascadeShadow"]->setShader(m_shaders["cascadeShadow"]);
@@ -173,8 +171,6 @@ void Application::run() {
 
 		// shadow map
 		m_renderer.setViewport(1024 * 4, 1024 * 4);
-		// m_shadowmaps["DirectLight"]->setupDirectLight(std::static_pointer_cast<DirectLight>(m_lights["DirectLight"]));
-		// m_shadowmaps["DirectLight"]->render(m_models, shadowUniform);
 		m_shadowmaps["CascadeShadow"]->setup(m_camera, std::static_pointer_cast<DirectLight>(m_lights["DirectLight"]));
 		m_shadowmaps["CascadeShadow"]->render(m_models, shadowUniform);
 		

@@ -50,16 +50,6 @@ ShadowMap::~ShadowMap() {
 	GLCall(glDeleteFramebuffers(1, &m_shadowFBO));
 }
 
-void ShadowMap::setupDirectLight(const std::shared_ptr<DirectLight>& directLight) {
-    glm::vec3 lightPos = directLight->direction * -6.0f; // TODO : not sure about this
-    glm::mat4 lightProjection = glm::ortho(-40.0f, 40.0f, -40.0f, 40.0f, 0.1f, 200.0f);
-    glm::mat4 lightView = glm::lookAt(lightPos, glm::vec3(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-    if (m_lightSpaceMatrices.size() == 0) {
-		m_lightSpaceMatrices.push_back(lightProjection * lightView);
-	} else {
-		m_lightSpaceMatrices[0] = lightProjection * lightView;
-	}
-}
 
 void ShadowMap::setup(const std::shared_ptr<Camera>& camera, const std::shared_ptr<DirectLight>& directLight) {
     m_camera = camera;
@@ -165,7 +155,7 @@ glm::mat4 ShadowMap::getLightSpaceMatrix(float near, float far) const  {
     }
 
     // Tune this parameter according to the scene
-    constexpr float zMult = 10.0f;
+    constexpr float zMult = 1.0f;
     if (minZ < 0) {
         minZ *= zMult;
     } else {
@@ -178,7 +168,7 @@ glm::mat4 ShadowMap::getLightSpaceMatrix(float near, float far) const  {
         maxZ *= zMult;
     }
 
-    const glm::mat4 lightProjection = glm::ortho(minX, maxX, minY, maxY, minZ, maxZ);
+    const glm::mat4 lightProjection = glm::ortho(minX, maxX, minY, maxY, -1.0f * maxZ, -1.0f * minZ); // add -1.0f * to make the near shadow visiable
     return lightProjection * lightView;
 }
 
@@ -190,11 +180,11 @@ void ShadowMap::getLightSpaceMatrices_Cascade() {
 	std::vector<glm::mat4> mat;
     for (size_t i = 0; i < m_shadowCascadeLevels.size() + 1; ++i) {
         if (i == 0) {
-			mat.push_back(getLightSpaceMatrix(0.1f, m_shadowCascadeLevels[i]));
+			mat.push_back(getLightSpaceMatrix(m_camera->getNearPlane(), m_shadowCascadeLevels[i]));
         } else if (i < m_shadowCascadeLevels.size()) {
 			mat.push_back(getLightSpaceMatrix(m_shadowCascadeLevels[i - 1], m_shadowCascadeLevels[i]));
         } else {
-			mat.push_back(getLightSpaceMatrix(m_shadowCascadeLevels[i - 1], 200.0f));
+			mat.push_back(getLightSpaceMatrix(m_shadowCascadeLevels[i - 1], m_camera->getFarPlane()));
         }
     }
 	m_lightSpaceMatrices = mat;

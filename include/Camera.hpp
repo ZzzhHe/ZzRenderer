@@ -26,10 +26,19 @@ public:
 	virtual glm::mat4 getProjectionMatrix(float aspectRatio) {
         m_aspectRatio = aspectRatio;
         return glm::mat4(1.0f);
-        };
+	};
+	
+	virtual void setNearFarPlane(float near, float far) {
+		m_near = near;
+		m_far = far;
+	};
     virtual float getAspectRatio() const {return m_aspectRatio;};
+	virtual float getNearPlane() const {return m_near; };
+	virtual float getFarPlane() const {return m_far; };
 protected:
     float m_aspectRatio;
+	float m_near;
+	float m_far;
 };
 
 // Camera class for FPS-like controls
@@ -70,8 +79,8 @@ public:
         return glm::lookAt(Position, Position + Front, Up);
     }
     glm::mat4 getProjectionMatrix(float aspectRatio) override{
-        m_aspectRatio = aspectRatio;
-        return glm::perspective(glm::radians(Zoom), aspectRatio, 0.1f, 200.0f);
+		m_aspectRatio = aspectRatio;
+        return glm::perspective(glm::radians(Zoom), aspectRatio, m_near, m_far);
     }
 
 private:
@@ -102,8 +111,8 @@ public:
     }
 
     glm::mat4 getProjectionMatrix(float aspectRatio) override{
-        m_aspectRatio = aspectRatio;
-        return glm::perspective(glm::radians(45.0f), aspectRatio, 0.1f, 200.0f);
+		m_aspectRatio = aspectRatio;
+        return glm::perspective(glm::radians(45.0f), aspectRatio, m_near, m_far);
     }
 
     void processMouseMovement(float xoffset, float yoffset);
