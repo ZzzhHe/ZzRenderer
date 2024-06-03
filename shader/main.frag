@@ -54,7 +54,7 @@ layout (std140) uniform UboCamera {
 
 vec4 CalcDirectLight(DirectLight light, vec3 normal, vec3 viewDir, float shadow);
 vec4 CalcPointLight(PointLight light, vec3 normal, vec3 viewDir, float shadow);
-float ShadowCalculation(vec3 fragPos, vec3 lightDir);
+float ShadowCalculation(vec3 fragPos, vec3 normal, vec3 lightDir);
 
 void main() {
 	vec3 normal = texture(material.normal, fs_in.TexCoords).rgb;
@@ -65,7 +65,7 @@ void main() {
 	vec4 direct_light_color = vec4(0.0);
 	for (int i = 0; i < numDirectLights; i ++) {
 		vec3 lightDir = normalize(-directLight[i].direction);
-		float shadow = ShadowCalculation(fs_in.FragPos, lightDir);
+		float shadow = ShadowCalculation(fs_in.FragPos, normal, lightDir);
 		direct_light_color += CalcDirectLight(directLight[i], normal, viewDir, shadow);
 	}
 	vec4 point_light_color = vec4(0.0);
@@ -130,7 +130,7 @@ vec4 CalcPointLight(PointLight light, vec3 normal, vec3 viewDir, float shadow) {
 	return vec4(outColor, alpha);
 }
 
-float ShadowCalculation(vec3 fragPos, vec3 lightDir) {
+float ShadowCalculation(vec3 fragPos, vec3 normal, vec3 lightDir) {
 	// select cascade layer
 	vec4 fragPosViewSpace = view * vec4(fragPos, 1.0);
 	float depthValue = abs(fragPosViewSpace.z);
@@ -160,7 +160,6 @@ float ShadowCalculation(vec3 fragPos, vec3 lightDir) {
 		return 0.0;
 	}
 	// calculate bias (based on depth map resolution and slope)
-	vec3 normal = normalize(fs_in.Normal);
 	float bias = max(0.05 * (1.0 - dot(normal, lightDir)), 0.005);
 	const float biasModifier = 0.5f;
 	if (layer == cascadeCount) {

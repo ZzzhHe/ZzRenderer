@@ -82,20 +82,6 @@ void ShadowMap::render(std::unordered_map<uint32_t, std::shared_ptr<Model>>& mod
 	unbindFramebuffer();
 }
 
-// void ShadowMap::render_cascade(std::unordered_map<uint32_t, std::shared_ptr<Model>>& models, ShadowUniform& uniformData) {
-// 	bindFramebuffer();
-// 	GLCall(glClear(GL_DEPTH_BUFFER_BIT));
-// 	GLCall(glCullFace(GL_FRONT));
-//     uniformData.lightSpaceMatrices = getLightSpaceMatrices_Cascade();
-// 	for (auto& kv: models) {
-// 		auto& model = kv.second;
-// 		model->setShader(m_shader);
-// 		model->render(uniformData);
-// 	}
-// 	GLCall(glCullFace(GL_BACK));
-// 	unbindFramebuffer();
-// }
-
 void ShadowMap::bindFramebuffer() {
 	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, m_shadowFBO));
 }
@@ -160,7 +146,7 @@ glm::mat4 ShadowMap::getLightSpaceMatrix(float near, float far) const  {
     }
     center /= corners.size();
 
-    const auto lightView = glm::lookAt(center + m_directLight->direction, center, glm::vec3(0.0f, 1.0f, 0.0f));
+    const auto lightView = glm::lookAt(center - m_directLight->direction, center, glm::vec3(0.0f, 1.0f, 0.0f)); // be careful to the light direction
 
     float minX = std::numeric_limits<float>::max();
     float maxX = std::numeric_limits<float>::lowest();

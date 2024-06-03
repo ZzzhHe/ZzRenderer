@@ -250,7 +250,7 @@ void Application::loadRenderObjects() {
 	modelMatrix = glm::mat4(1.0f);
 	model = std::make_shared<Model>("resource/model/plane/plane.obj");
 	modelMatrix = glm::scale(modelMatrix, glm::vec3(10.0f));
-	modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, 0.0f, 0.0f));
+	modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, -0.001f, 0.0f));
 	model->setModelMatrix(modelMatrix);
 	m_models.emplace(m_current_id, model);
 	m_current_id++;
