@@ -11,7 +11,7 @@ enum struct TextureType {
     FRAMEBUFFER,
     SHADOW_MAP,
     Array_2D,
-    BLOOM,
+    HDR,
 };
 
 class Texture {

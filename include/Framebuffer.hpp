@@ -10,7 +10,7 @@ public:
     Framebuffer(const unsigned int width, const unsigned int height, const std::string name);
     ~Framebuffer();
 
-    void attachTexture();
+    void attachTexture(TextureType type = TextureType::FRAMEBUFFER);
     void debug_setTexture(std::shared_ptr<Texture> texture);
 
     void attachRenderBuffer();

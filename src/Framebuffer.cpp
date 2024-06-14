@@ -52,9 +52,9 @@ void Framebuffer::setShader(std::shared_ptr<Shader> shader) {
     m_shader = shader;
 }
 
-void Framebuffer::attachTexture() {
+void Framebuffer::attachTexture(TextureType type) {
     // generate Texture
-	m_texture = std::make_shared<Texture>(m_width, m_height, TextureType::FRAMEBUFFER);
+	m_texture = std::make_shared<Texture>(m_width, m_height, type);
     // attach
     GLCall(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_texture->id(), 0));
 }

@@ -16,26 +16,38 @@ void Bloom::init() {
 
     // Initialize framebuffers
     m_fbos["BrightFBO"] = std::make_shared<Framebuffer>(m_width, m_height, "BrightMap");
+	m_fbos["BrightFBO"]->setShader(m_shader["BrightShader"]);
+	m_fbos["BrightFBO"]->bind();
+	m_fbos["BrightFBO"]->attachTexture(TextureType::HDR);
+	m_fbos["BrightFBO"]->attachRenderBuffer();
+	m_fbos["BrightFBO"]->checkStatus();
+	m_fbos["BrightFBO"]->unbind();
+	
+	
     m_fbos["BlurFBO1"] = std::make_shared<Framebuffer>(m_width, m_height, "BlurMap");
-    m_fbos["BlurFBO2"] = std::make_shared<Framebuffer>(m_width, m_height, "BlurMap");
-    // this framebuffer will be used to render to screen
+	m_fbos["BlurFBO1"]->setShader(m_shader["BlurShader"]);
+	m_fbos["BlurFBO1"]->bind();
+	m_fbos["BlurFBO1"]->attachTexture(TextureType::HDR);
+	m_fbos["BlurFBO1"]->attachRenderBuffer();
+	m_fbos["BlurFBO1"]->checkStatus();
+	m_fbos["BlurFBO1"]->unbind();
+	
+	m_fbos["BlurFBO2"] = std::make_shared<Framebuffer>(m_width, m_height, "BlurMap");
+	m_fbos["BlurFBO2"]->setShader(m_shader["BlurShader"]);
+	m_fbos["BlurFBO2"]->bind();
+	m_fbos["BlurFBO2"]->attachTexture(TextureType::HDR);
+	m_fbos["BlurFBO2"]->attachRenderBuffer();
+	m_fbos["BlurFBO2"]->checkStatus();
+	m_fbos["BlurFBO2"]->unbind();
+	// this framebuffer will be used to render to screen
     m_fbos["BloomFBO"] = std::make_shared<Framebuffer>(m_width, m_height, "BloomBlurMap");
+	m_fbos["BloomFBO"]->setShader(m_shader["BloomShader"]);
+	m_fbos["BloomFBO"]->bind();
+	m_fbos["BloomFBO"]->attachTexture(TextureType::HDR);
+	m_fbos["BloomFBO"]->attachRenderBuffer();
+	m_fbos["BloomFBO"]->checkStatus();
+	m_fbos["BloomFBO"]->unbind();
 
-    m_fbos["BrightFBO"]->attachTexture();
-    m_fbos["BrightFBO"]->setShader(m_shader["BrightShader"]);
-    m_fbos["BrightFBO"]->checkStatus();
-
-    m_fbos["BlurFBO1"]->attachTexture();
-    m_fbos["BlurFBO1"]->setShader(m_shader["BlurShader"]);
-    m_fbos["BlurFBO1"]->checkStatus();
-
-    m_fbos["BlurFBO2"]->attachTexture();
-    m_fbos["BlurFBO2"]->setShader(m_shader["BlurShader"]);
-    m_fbos["BlurFBO2"]->checkStatus();
-
-    m_fbos["BloomFBO"]->attachTexture();
-    m_fbos["BloomFBO"]->setShader(m_shader["BloomShader"]);
-    m_fbos["BloomFBO"]->checkStatus();
 }
 
 void Bloom::applyBloomEffect(std::shared_ptr<Framebuffer> sceneFBO) {
