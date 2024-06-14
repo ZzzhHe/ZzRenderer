@@ -49,7 +49,7 @@ void Gui::updateGUI(GuiData& guiData) {
             }
 
             // Slider for light intensity using the alpha channel of the color
-            ImGui::SliderFloat("Intensity", &light->color.w, 0.0f, 1.0f, "%.2f");
+            ImGui::SliderFloat("Intensity", &light->color.w, 0.0f, 2.0f, "%.2f");
             
             // Color picker for ambient color (ignores alpha)
             ImGui::ColorEdit3("Ambient Color", &light->ambientColor[0], ImGuiColorEditFlags_Float);

@@ -130,6 +130,8 @@ Application::Application() {
 		throw std::runtime_error("Framebuffer is not complete!");
 	}
 
+	m_bloom = std::make_shared<Bloom>(WIDTH * 2, HEIGHT * 2);
+
 	// uniform buffer objects
 	m_ubos["UboCamera"] = std::make_shared<Ubo>("UboCamera", sizeof(UboCamera));
 	m_ubos["UboCamera"]->uniformBlockBindingPoint(*m_shaders["main"], 0);
@@ -189,7 +191,8 @@ void Application::run() {
 			m_models[i]->setShader(m_shaders["main"]);
 		}
 
-		m_framebuffers[currentFramebuffer]->bind();
+		// m_framebuffers[currentFramebuffer]->bind();
+		m_framebuffers["HDR"]->bind();
 
 		m_renderer.setViewport(WIDTH * 2, HEIGHT * 2);
 		m_renderer.enable(GL_DEPTH_TEST);
@@ -206,20 +209,26 @@ void Application::run() {
 
         for (const auto& kv : m_models) {
             auto model = kv.second;
-            m_renderer.render(model, m_uniform); // TODO: set modelMatrix for each model?
+            m_renderer.render(model, m_uniform);
         }
 		
 		m_renderer.setDepthFunc(GL_LEQUAL);
 		m_skybox->render(viewMatrix, projectionMatrix);
 		m_renderer.setDepthFunc(GL_LESS);
 
-		m_framebuffers[currentFramebuffer]->unbind();
+		// m_framebuffers[currentFramebuffer]->unbind();
+		m_framebuffers["HDR"]->unbind();
 		
 		m_renderer.disable(GL_DEPTH_TEST);
+		
+
+		m_bloom->applyBloomEffect(m_framebuffers["HDR"]);
+
 		m_renderer.clearColor(1.0f, 1.0f, 1.0f, 1.0f);
 		m_renderer.clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		m_framebuffers[currentFramebuffer]->render();
+		m_bloom->renderBloomFBO(m_framebuffers["HDR"]);
+		
+		// m_framebuffers[currentFramebuffer]->render();
 
 		m_gui.render();
 		

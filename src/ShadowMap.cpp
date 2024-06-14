@@ -124,7 +124,6 @@ std::vector<glm::vec4> ShadowMap::getFrustumCornersWorldSpace(const glm::mat4& p
 	return frustumCorners;
 }
 
-// TODO: proj, view, near, far and light direction
 glm::mat4 ShadowMap::getLightSpaceMatrix(float near, float far) const  {
     const auto projection = glm::perspective(ZOOM, m_camera->getAspectRatio(), near, far);
     
@@ -172,8 +171,6 @@ glm::mat4 ShadowMap::getLightSpaceMatrix(float near, float far) const  {
     return lightProjection * lightView;
 }
 
-
-// TODO: shadowCascadeLevels save the near and far plane of each cascade
 
 void ShadowMap::getLightSpaceMatrices_Cascade() {
 	

@@ -11,6 +11,7 @@ enum struct TextureType {
     FRAMEBUFFER,
     SHADOW_MAP,
     Array_2D,
+    BLOOM,
 };
 
 class Texture {
@@ -19,7 +20,7 @@ public:
     Texture(const std::string& path, const TextureType type);
     Texture(const unsigned int width, const unsigned int height, const TextureType type);
     Texture(const unsigned int width, const unsigned int height, const unsigned int shadowCascadeLevelCount, const TextureType type);
-    
+
     ~Texture();
 
     void bind(const unsigned int slot = 0) const;

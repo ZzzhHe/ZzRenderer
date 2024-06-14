@@ -78,31 +78,37 @@ Texture::Texture(const std::vector<std::string>& paths, TextureType type)
 
 Texture::Texture(const unsigned int width, const unsigned int height, TextureType type)
     : m_RendererID(0), m_Type(type), m_Width(width), m_Height(height), m_BPP(0) {
-    if (type != TextureType::FRAMEBUFFER && type != TextureType::SHADOW_MAP) {
+    if (type != TextureType::FRAMEBUFFER && type != TextureType::SHADOW_MAP && type != TextureType::BLOOM) {
         throw std::runtime_error("Texture type should be FRAMEBUFFER or SHADOW_MAP!");
     }
     GLCall(glGenTextures(1, &m_RendererID));
     GLCall(glBindTexture(GL_TEXTURE_2D, m_RendererID));
     if (type == TextureType::SHADOW_MAP) {
+        // shadow map
         GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, 
             m_Width, m_Height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL));
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER); 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);  
-
-//         GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
-//         GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
-//         GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
-//         GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
-
-    } else {
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER); 
+    } else if (type == TextureType::FRAMEBUFFER) {
+        // framebuffer
         GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 
             m_Width, m_Height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL));
 
         GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
         GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
-
+    } else if (type == TextureType::BLOOM) {
+        // bloom texture
+        glTexImage2D(
+            GL_TEXTURE_2D, 0, GL_RGBA16F, m_Width, m_Height, 0, GL_RGBA, GL_FLOAT, NULL
+        );
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    } else {
+        throw std::runtime_error("Texture type should be FRAMEBUFFER or SHADOW_MAP or BLOOM!");
     }
 }
 
