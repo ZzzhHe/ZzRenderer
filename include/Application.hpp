@@ -27,7 +27,7 @@ public:
 
 private:
     void loadRenderObjects();
-	void mainRender(glm::mat4 view, glm::mat4 proj);
+	void mainRendering(glm::mat4 view, glm::mat4 proj);
 
 private:
     Window m_window{WIDTH, HEIGHT, "OpenGL"};
@@ -51,6 +51,5 @@ private:
 
     std::unordered_map<std::string, std::shared_ptr<Framebuffer>> m_framebuffers;
     std::unordered_map<std::string, std::shared_ptr<ShadowMap>> m_shadowmaps;
-	std::shared_ptr<Framebuffer> m_hdrFBO;
     std::shared_ptr<Bloom> m_bloomFBO;
 };

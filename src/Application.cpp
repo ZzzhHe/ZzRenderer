@@ -121,16 +121,6 @@ Application::Application() {
 	}
 	m_framebuffers["ShadowDebug"]->unbind();
 
-	m_hdrFBO = std::make_shared<Framebuffer>(WIDTH * 2, HEIGHT * 2, "HDRTexture");
-	m_hdrFBO->setShader(m_shaders["hdr"]);
-	m_hdrFBO->bind();
-	m_hdrFBO->attachTexture(TextureType::HDR);
-	m_hdrFBO->attachRenderBuffer();
-	if (!m_hdrFBO->checkStatus()) {
-		throw std::runtime_error("Framebuffer is not complete!");
-	}
-	m_hdrFBO->unbind();
-
 	m_bloomFBO = std::make_shared<Bloom>(WIDTH * 2, HEIGHT * 2);
 
 	// uniform buffer objects
@@ -194,25 +184,17 @@ void Application::run() {
 
 		m_framebuffers[currentFramebuffer]->bind();
 
-		mainRender(viewMatrix, projectionMatrix);
+		mainRendering(viewMatrix, projectionMatrix);
 
 		m_framebuffers[currentFramebuffer]->unbind();
 		
 		m_renderer.disable(GL_DEPTH_TEST);
 		
-		m_hdrFBO->bind();
+		m_bloomFBO->applyBloomEffect(m_framebuffers[currentFramebuffer]);
 		
 		m_renderer.clearColor(1.0f, 1.0f, 1.0f, 1.0f);
 		m_renderer.clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		m_framebuffers[currentFramebuffer]->render();
-		
-		m_hdrFBO->unbind();
-		
-		m_bloomFBO->applyBloomEffect(m_hdrFBO);
-		
-		m_renderer.clearColor(1.0f, 1.0f, 1.0f, 1.0f);
-		m_renderer.clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		m_bloomFBO->renderBloomFBO(m_hdrFBO);
+		m_bloomFBO->renderBloomFBO(m_framebuffers[currentFramebuffer]);
 
 		m_gui.render();
 		
@@ -221,7 +203,7 @@ void Application::run() {
     }
 }
 
-void Application::mainRender(glm::mat4 view, glm::mat4 proj) {
+void Application::mainRendering(glm::mat4 view, glm::mat4 proj) {
 	m_renderer.setViewport(WIDTH * 2, HEIGHT * 2);
 	m_renderer.enable(GL_DEPTH_TEST);
 	m_renderer.clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -256,7 +238,7 @@ void Application::loadRenderObjects() {
 //	m_current_id++;
 	
 	auto model = std::make_shared<Model>("resource/model/jam/jam.obj");
-	modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(-3.0f, 0.0f, 0.0f));
 	model->setModelMatrix(modelMatrix);
 	m_models.emplace(m_current_id, model);
 	m_current_id++;
@@ -264,7 +246,7 @@ void Application::loadRenderObjects() {
 	modelMatrix = glm::mat4(1.0f);
 	model = std::make_shared<Model>("resource/model/nuka_cup/nuka_cup.obj");
 	modelMatrix = glm::scale(modelMatrix, glm::vec3(0.5f));
-	modelMatrix = glm::translate(modelMatrix, glm::vec3(2.5f, 0.5f, 0.0f));
+	modelMatrix = glm::translate(modelMatrix, glm::vec3(-3.5f, 0.5f, 0.0f));
 	modelMatrix = glm::rotate(modelMatrix, glm::radians(45.0f), glm::vec3(0.0f, 0.0f, -30.0f));
 	model->setModelMatrix(modelMatrix);
 	m_models.emplace(m_current_id, model);
@@ -290,8 +272,8 @@ void Application::loadRenderObjects() {
 	modelMatrix = glm::mat4(1.0f);
 	model = std::make_shared<Model>("resource/model/jukebox/jukebox.obj");
 	modelMatrix = glm::scale(modelMatrix, glm::vec3(1.0f));
-	modelMatrix = glm::translate(modelMatrix, glm::vec3(5.0f, 0.0f, 0.0f));
-	modelMatrix = glm::rotate(modelMatrix, glm::radians(-45.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	modelMatrix = glm::translate(modelMatrix, glm::vec3(5.0f, 0.0f, 4.0f));
+	modelMatrix = glm::rotate(modelMatrix, glm::radians(-135.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	model->setModelMatrix(modelMatrix);
 	m_models.emplace(m_current_id, model);
 	m_current_id++;

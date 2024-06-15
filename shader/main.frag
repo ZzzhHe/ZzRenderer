@@ -79,7 +79,7 @@ void main() {
 	// emission
 	vec3 emission = vec3(0.0, 0.0, 0.0);
 	if (hasEmissionMap) {
-		emission = texture(material.emission, fs_in.TexCoords).rgb * 1.5;
+		emission = texture(material.emission, fs_in.TexCoords).rgb * 20.5;
 	}
 	
 	FragColor = direct_light_color + point_light_color + vec4(emission, 1.0);
@@ -178,7 +178,7 @@ float ShadowCalculation(vec3 fragPos, vec3 normal, vec3 lightDir) {
 		bias *= 1 / (cascadePlaneDistances[layer] * biasModifier);
 	}
 	
-	bias *= 0.01;
+	bias *= 0.1;
 	
 	// PCF
 	float shadow = 0.0;

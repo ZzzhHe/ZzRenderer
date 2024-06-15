@@ -8,8 +8,7 @@ public:
     ~Bloom();
 
     void init();
-    void applyBloomEffect(std::shared_ptr<Framebuffer> sceneFBO);
-    std::shared_ptr<Framebuffer> getBloomFBO() const;   
+    void applyBloomEffect(std::shared_ptr<Framebuffer> sceneFBO);  
     void renderBloomFBO(std::shared_ptr<Framebuffer> sceneFBO);
 
 private:
