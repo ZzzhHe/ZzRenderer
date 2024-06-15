@@ -28,8 +28,11 @@ struct PointLight {
 struct Material {
     sampler2D diffuse; 
     sampler2D specular;
+	sampler2D emission;
     sampler2D normal;
 };
+
+uniform bool hasEmissionMap;
 
 uniform Material material;
 uniform sampler2DArray shadowMap;
@@ -72,7 +75,14 @@ void main() {
 //	for (int i = 0; i < numPointLights; i ++) {
 //		point_light_color += CalcPointLight(pointLight[i], normal, viewDir, shadow);
 //	}
-	FragColor = direct_light_color + point_light_color;
+	
+	// emission
+	vec3 emission = vec3(0.0, 0.0, 0.0);
+	if (hasEmissionMap) {
+		emission = texture(material.emission, fs_in.TexCoords).rgb * 1.5;
+	}
+	
+	FragColor = direct_light_color + point_light_color + vec4(emission, 1.0);
 }
 
 vec4 CalcDirectLight(DirectLight light, vec3 normal, vec3 viewDir, float shadow) {

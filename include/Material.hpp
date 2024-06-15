@@ -10,12 +10,14 @@
 struct MaterialTextures {
     std::shared_ptr<Texture> diffuse;
     std::shared_ptr<Texture> specular;
+	std::shared_ptr<Texture> emission;
     std::shared_ptr<Texture> normal;
 	std::shared_ptr<Texture> shadow;
-
+	
     bool operator==(const MaterialTextures& other) const {
         return diffuse == other.diffuse 
             && specular == other.specular 
+			&& emission == other.emission
             && normal == other.normal;
     }
 };
@@ -60,16 +62,23 @@ public:
             shader->setInt("material.specular", 1);
             textures->specular->bind(1);
         }
+		if (textures->emission) {
+			shader->setInt("material.emission", 2);
+			textures->emission->bind(2);
+			shader->setBool("hasEmissionMap", true);
+		} else {
+			shader->setBool("hasEmissionMap", false);
+		}
         if (textures->normal) {
-            shader->setInt("material.normal", 2);
-            textures->normal->bind(2);
+            shader->setInt("material.normal", 3);
+            textures->normal->bind(3);
         }
 		
 		textures->shadow = uniformData.shadowMap;
 		
 		if (textures->shadow) {
-			shader->setInt("shadowMap", 3);
-			textures->shadow->bind(3);
+			shader->setInt("shadowMap", 4);
+			textures->shadow->bind(4);
 		}
     }
 

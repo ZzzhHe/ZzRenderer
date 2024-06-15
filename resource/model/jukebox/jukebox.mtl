@@ -1,0 +1,16 @@
+# Blender 4.0.2 MTL File: 'jukebox.blend'
+# www.blender.org
+
+newmtl lambert1
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.500000 0.500000 0.500000
+Ks 0.500000 0.500000 0.500000
+Ke 1.000000 1.000000 1.000000
+Ni 1.450000
+d 1.000000
+illum 4
+map_Kd jukebox4k_bc.png
+map_Ks jukebox4k_r.png
+map_Kn jukebox4k_n.png
+map_Ke jukebox4k_e.png

@@ -121,17 +121,17 @@ Application::Application() {
 	}
 	m_framebuffers["ShadowDebug"]->unbind();
 
-	m_framebuffers["HDR"] = std::make_shared<Framebuffer>(WIDTH * 2, HEIGHT * 2, "HDRTexture");
-	m_framebuffers["HDR"]->setShader(m_shaders["hdr"]);
-	m_framebuffers["HDR"]->bind();
-	m_framebuffers["HDR"]->attachTexture(TextureType::HDR);
-	m_framebuffers["HDR"]->attachRenderBuffer();
-	if (!m_framebuffers["HDR"]->checkStatus()) {
+	m_hdrFBO = std::make_shared<Framebuffer>(WIDTH * 2, HEIGHT * 2, "HDRTexture");
+	m_hdrFBO->setShader(m_shaders["hdr"]);
+	m_hdrFBO->bind();
+	m_hdrFBO->attachTexture(TextureType::HDR);
+	m_hdrFBO->attachRenderBuffer();
+	if (!m_hdrFBO->checkStatus()) {
 		throw std::runtime_error("Framebuffer is not complete!");
 	}
-	m_framebuffers["HDR"]->unbind();
+	m_hdrFBO->unbind();
 
-	m_bloom = std::make_shared<Bloom>(WIDTH * 2, HEIGHT * 2);
+	m_bloomFBO = std::make_shared<Bloom>(WIDTH * 2, HEIGHT * 2);
 
 	// uniform buffer objects
 	m_ubos["UboCamera"] = std::make_shared<Ubo>("UboCamera", sizeof(UboCamera));
@@ -192,50 +192,57 @@ void Application::run() {
 			m_models[i]->setShader(m_shaders["main"]);
 		}
 
-//		 m_framebuffers[currentFramebuffer]->bind();
-		m_framebuffers["HDR"]->bind();
+		m_framebuffers[currentFramebuffer]->bind();
 
-		m_renderer.setViewport(WIDTH * 2, HEIGHT * 2);
-		m_renderer.enable(GL_DEPTH_TEST);
-        m_renderer.clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		
-		m_uniform = {
-			glm::mat4(1.0f),
-			getValues(m_lights),
-			m_shadowmaps["CascadeShadow"]->getDepthMapTexture(),
-			m_shadowmaps["CascadeShadow"]->getCascadeLevelsCount(),
-			m_shadowmaps["CascadeShadow"]->getCascadeLevels(),
-			m_shadowmaps["CascadeShadow"]->getLightSpaceMatrices(),
-		};
+		mainRender(viewMatrix, projectionMatrix);
 
-        for (const auto& kv : m_models) {
-            auto model = kv.second;
-            m_renderer.render(model, m_uniform);
-        }
-		
-		m_renderer.setDepthFunc(GL_LEQUAL);
-		m_skybox->render(viewMatrix, projectionMatrix);
-		m_renderer.setDepthFunc(GL_LESS);
-
-//		 m_framebuffers[currentFramebuffer]->unbind();
-		m_framebuffers["HDR"]->unbind();
+		m_framebuffers[currentFramebuffer]->unbind();
 		
 		m_renderer.disable(GL_DEPTH_TEST);
 		
-
-//		m_bloom->applyBloomEffect(m_framebuffers["HDR"]);
-//
+		m_hdrFBO->bind();
+		
 		m_renderer.clearColor(1.0f, 1.0f, 1.0f, 1.0f);
 		m_renderer.clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-//		m_bloom->renderBloomFBO(m_framebuffers["HDR"]);
-		m_framebuffers["HDR"]->render();
-//		 m_framebuffers[currentFramebuffer]->render();
+		m_framebuffers[currentFramebuffer]->render();
+		
+		m_hdrFBO->unbind();
+		
+		m_bloomFBO->applyBloomEffect(m_hdrFBO);
+		
+		m_renderer.clearColor(1.0f, 1.0f, 1.0f, 1.0f);
+		m_renderer.clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		m_bloomFBO->renderBloomFBO(m_hdrFBO);
 
 		m_gui.render();
 		
         m_window.swapBuffers();
 		m_window.pollEvents();
     }
+}
+
+void Application::mainRender(glm::mat4 view, glm::mat4 proj) {
+	m_renderer.setViewport(WIDTH * 2, HEIGHT * 2);
+	m_renderer.enable(GL_DEPTH_TEST);
+	m_renderer.clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	
+	m_uniform = {
+		glm::mat4(1.0f),
+		getValues(m_lights),
+		m_shadowmaps["CascadeShadow"]->getDepthMapTexture(),
+		m_shadowmaps["CascadeShadow"]->getCascadeLevelsCount(),
+		m_shadowmaps["CascadeShadow"]->getCascadeLevels(),
+		m_shadowmaps["CascadeShadow"]->getLightSpaceMatrices(),
+	};
+
+	for (const auto& kv : m_models) {
+		auto model = kv.second;
+		m_renderer.render(model, m_uniform);
+	}
+	
+	m_renderer.setDepthFunc(GL_LEQUAL);
+	m_skybox->render(view, proj);
+	m_renderer.setDepthFunc(GL_LESS);
 }
 
 void Application::loadRenderObjects() {
@@ -275,6 +282,15 @@ void Application::loadRenderObjects() {
 	model = std::make_shared<Model>("resource/model/stone_wall/stone_wall.obj");
 	modelMatrix = glm::scale(modelMatrix, glm::vec3(5.0f));
 	modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, 0.0f, -3.0f));
+	modelMatrix = glm::rotate(modelMatrix, glm::radians(-45.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	model->setModelMatrix(modelMatrix);
+	m_models.emplace(m_current_id, model);
+	m_current_id++;
+	
+	modelMatrix = glm::mat4(1.0f);
+	model = std::make_shared<Model>("resource/model/jukebox/jukebox.obj");
+	modelMatrix = glm::scale(modelMatrix, glm::vec3(1.0f));
+	modelMatrix = glm::translate(modelMatrix, glm::vec3(5.0f, 0.0f, 0.0f));
 	modelMatrix = glm::rotate(modelMatrix, glm::radians(-45.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	model->setModelMatrix(modelMatrix);
 	m_models.emplace(m_current_id, model);
