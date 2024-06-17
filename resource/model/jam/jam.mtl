@@ -8,6 +8,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.450000
 d 1.000000
 illum 2
-map_Kd main_baseColor.png
-map_Ks main_specular.png
+map_albedo main_baseColor.png
+map_Pm main_specular.png
+map_Pr
 map_Kn main_normal.png

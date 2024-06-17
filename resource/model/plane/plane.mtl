@@ -9,6 +9,8 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.450000
 d 1.000000
 illum 2
+map_Ka Floortile1AO.png
 map_Kd Floortile1Color.png
-map_Ks Floortile1Roughness.png
+map_Ks Floortile1curvature.png
+map_Ns Floortile1Roughness.png
 map_Kn Floortile1Normal.png

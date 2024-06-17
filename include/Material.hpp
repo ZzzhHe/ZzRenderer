@@ -8,17 +8,23 @@
 #include <vector>
 
 struct MaterialTextures {
-    std::shared_ptr<Texture> diffuse;
-    std::shared_ptr<Texture> specular;
+    std::shared_ptr<Texture> albedo;
+    std::shared_ptr<Texture> metallic;
+	std::shared_ptr<Texture> roughness;
+	std::shared_ptr<Texture> normal;
+	std::shared_ptr<Texture> ao;
+	
 	std::shared_ptr<Texture> emission;
-    std::shared_ptr<Texture> normal;
 	std::shared_ptr<Texture> shadow;
 	
     bool operator==(const MaterialTextures& other) const {
-        return diffuse == other.diffuse 
-            && specular == other.specular 
+        return albedo == other.albedo
+			&& metallic == metallic
+            && roughness == other.roughness
+			&& normal == other.normal
+			&& ao == other.ao
 			&& emission == other.emission
-            && normal == other.normal;
+            && shadow == other.shadow;
     }
 };
 
@@ -54,31 +60,44 @@ public:
         shader->setInt("numPointLights", pointLightCount);
         shader->setInt("numDirectLights", directLightCount);
 
-        if (textures->diffuse) {
-            shader->setInt("material.diffuse", 0);
-            textures->diffuse->bind(0);
+        if (textures->albedo) {
+            shader->setInt("material.albedo", 0);
+            textures->albedo->bind(0);
         }
-        if (textures->specular) {
-            shader->setInt("material.specular", 1);
-            textures->specular->bind(1);
+        if (textures->metallic) {
+            shader->setInt("material.metallic", 1);
+            textures->metallic->bind(1);
         }
+		
+		if (textures->roughness) {
+			shader->setInt("material.roughness", 2);
+			textures->roughness->bind(2);
+		}
+		
+		if (textures->normal) {
+			shader->setInt("material.normal", 3);
+			textures->normal->bind(3);
+		}
+		
+		if (textures->ao) {
+			shader->setInt("material.ao", 4);
+			textures->ao->bind(4);
+		}
+		
 		if (textures->emission) {
-			shader->setInt("material.emission", 2);
-			textures->emission->bind(2);
+			shader->setInt("material.emission", 5);
+			textures->emission->bind(5);
 			shader->setBool("hasEmissionMap", true);
 		} else {
 			shader->setBool("hasEmissionMap", false);
 		}
-        if (textures->normal) {
-            shader->setInt("material.normal", 3);
-            textures->normal->bind(3);
-        }
+
 		
 		textures->shadow = uniformData.shadowMap;
 		
 		if (textures->shadow) {
-			shader->setInt("shadowMap", 4);
-			textures->shadow->bind(4);
+			shader->setInt("shadowMap", 6);
+			textures->shadow->bind(6);
 		}
     }
 

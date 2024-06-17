@@ -3,10 +3,12 @@
 #include <string>
 
 enum struct TextureType {
-    DIFFUSE,
-    SPECULAR,
-    EMISSION,
+    ALBEDO,
     NORMAL,
+    METALLIC,
+    ROUGHNESS,
+	AO,
+	EMISSION,
     CUBE_MAP,
     FRAMEBUFFER,
     SHADOW_MAP,

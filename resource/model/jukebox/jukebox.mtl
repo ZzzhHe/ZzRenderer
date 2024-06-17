@@ -10,7 +10,9 @@ Ke 1.000000 1.000000 1.000000
 Ni 1.450000
 d 1.000000
 illum 4
+map_Ka jukebox4k_ao.png
 map_Kd jukebox4k_bc.png
-map_Ks jukebox4k_r.png
+map_Ks jukebox4k_m.png
+map_Ns jukebox4k_r.png
 map_Kn jukebox4k_n.png
 map_Ke jukebox4k_e.png

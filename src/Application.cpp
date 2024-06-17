@@ -237,42 +237,42 @@ void Application::loadRenderObjects() {
 //	m_models.emplace(m_current_id, model);
 //	m_current_id++;
 	
-	auto model = std::make_shared<Model>("resource/model/jam/jam.obj");
-	modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(-3.0f, 0.0f, 0.0f));
-	model->setModelMatrix(modelMatrix);
-	m_models.emplace(m_current_id, model);
-	m_current_id++;
+//	auto model = std::make_shared<Model>("resource/model/jam/jam.obj");
+//	modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(-3.0f, 0.0f, 0.0f));
+//	model->setModelMatrix(modelMatrix);
+//	m_models.emplace(m_current_id, model);
+//	m_current_id++;
 	
-	modelMatrix = glm::mat4(1.0f);
-	model = std::make_shared<Model>("resource/model/nuka_cup/nuka_cup.obj");
-	modelMatrix = glm::scale(modelMatrix, glm::vec3(0.5f));
-	modelMatrix = glm::translate(modelMatrix, glm::vec3(-3.5f, 0.5f, 0.0f));
-	modelMatrix = glm::rotate(modelMatrix, glm::radians(45.0f), glm::vec3(0.0f, 0.0f, -30.0f));
-	model->setModelMatrix(modelMatrix);
-	m_models.emplace(m_current_id, model);
-	m_current_id++;
+//	modelMatrix = glm::mat4(1.0f);
+//	model = std::make_shared<Model>("resource/model/nuka_cup/nuka_cup.obj");
+//	modelMatrix = glm::scale(modelMatrix, glm::vec3(0.5f));
+//	modelMatrix = glm::translate(modelMatrix, glm::vec3(-3.5f, 0.5f, 0.0f));
+//	modelMatrix = glm::rotate(modelMatrix, glm::radians(45.0f), glm::vec3(0.0f, 0.0f, -30.0f));
+//	model->setModelMatrix(modelMatrix);
+//	m_models.emplace(m_current_id, model);
+//	m_current_id++;
 
 	modelMatrix = glm::mat4(1.0f);
-	model = std::make_shared<Model>("resource/model/plane/plane.obj");
+	auto model = std::make_shared<Model>("resource/model/plane/plane.obj");
+	modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, -2.001f, 0.0f));
 	modelMatrix = glm::scale(modelMatrix, glm::vec3(10.0f));
-	modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, -0.001f, 0.0f));
 	model->setModelMatrix(modelMatrix);
 	m_models.emplace(m_current_id, model);
 	m_current_id++;
 
-	modelMatrix = glm::mat4(1.0f);
-	model = std::make_shared<Model>("resource/model/stone_wall/stone_wall.obj");
-	modelMatrix = glm::scale(modelMatrix, glm::vec3(5.0f));
-	modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, 0.0f, -3.0f));
-	modelMatrix = glm::rotate(modelMatrix, glm::radians(-45.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-	model->setModelMatrix(modelMatrix);
-	m_models.emplace(m_current_id, model);
-	m_current_id++;
+//	modelMatrix = glm::mat4(1.0f);
+//	model = std::make_shared<Model>("resource/model/stone_wall/stone_wall.obj");
+//	modelMatrix = glm::scale(modelMatrix, glm::vec3(5.0f));
+//	modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, 0.0f, -3.0f));
+//	modelMatrix = glm::rotate(modelMatrix, glm::radians(-45.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+//	model->setModelMatrix(modelMatrix);
+//	m_models.emplace(m_current_id, model);
+//	m_current_id++;
 	
 	modelMatrix = glm::mat4(1.0f);
 	model = std::make_shared<Model>("resource/model/jukebox/jukebox.obj");
 	modelMatrix = glm::scale(modelMatrix, glm::vec3(1.0f));
-	modelMatrix = glm::translate(modelMatrix, glm::vec3(5.0f, 0.0f, 4.0f));
+	modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, -2.0f, 0.0f));
 	modelMatrix = glm::rotate(modelMatrix, glm::radians(-135.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	model->setModelMatrix(modelMatrix);
 	m_models.emplace(m_current_id, model);

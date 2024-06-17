@@ -126,15 +126,18 @@ std::shared_ptr<Mesh> Model::processMesh(aiMesh *mesh, const aiScene *scene) {
 
     std::shared_ptr<MaterialTextures> materialTextures = std::make_shared<class MaterialTextures>();
 	
-	materialTextures->diffuse = nullptr;
+	materialTextures->albedo = nullptr;
 	
     if (mesh->mMaterialIndex >= 0) {
         aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
-        materialTextures->diffuse = loadMaterialTextures(material, aiTextureType_DIFFUSE, TextureType::DIFFUSE);
+        materialTextures->albedo = loadMaterialTextures(material, aiTextureType_DIFFUSE, TextureType::ALBEDO);
 		// cannot be nullptr?
-        materialTextures->specular = loadMaterialTextures(material, aiTextureType_SPECULAR, TextureType::SPECULAR);
-		materialTextures->emission = loadMaterialTextures(material, aiTextureType_EMISSIVE, TextureType::EMISSION);
+        materialTextures->metallic = loadMaterialTextures(material, aiTextureType_SPECULAR, TextureType::METALLIC);
+		materialTextures->roughness = loadMaterialTextures(material, aiTextureType_SHININESS, TextureType::ROUGHNESS);
         materialTextures->normal = loadMaterialTextures(material, aiTextureType_NORMALS, TextureType::NORMAL);
+		materialTextures->ao = loadMaterialTextures(material, aiTextureType_AMBIENT, TextureType::AO);
+		
+		materialTextures->emission = loadMaterialTextures(material, aiTextureType_EMISSIVE, TextureType::EMISSION);
     }
 
 
