@@ -1,0 +1,16 @@
+# Blender 4.0.2 MTL File: 'None'
+# www.blender.org
+
+newmtl 08_-_Default
+Ns 20.000006
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Ka Cerberus_AO.tga
+map_Kd Cerberus_A.tga
+map_Ks Cerberus_M.tga
+map_Ns Cerberus_R.tga
+map_Kn Cerberus_N.tga

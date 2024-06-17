@@ -17,6 +17,6 @@ void main() {
 	// tone mapping
 	vec3 result = vec3(1.0) - exp(-finalColor * exposure);
 	// gamma correct
-//	result = pow(result, vec3(1.0 / gamma));
+	result = pow(result, vec3(1.0 / gamma));
 	FragColor = vec4(result, 1.0);
 }

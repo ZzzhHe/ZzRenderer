@@ -199,7 +199,7 @@ float ShadowCalculation(vec3 fragPos, vec3 normal, vec3 lightDir) {
 
 void main() {
 
-	vec3 albedo     = texture(material.albedo, fs_in.TexCoords).rgb;
+	vec3 albedo     = pow(texture(material.albedo, fs_in.TexCoords).rgb, vec3(2.2));
 	float metallic  = texture(material.metallic, fs_in.TexCoords).r;
 	float roughness = texture(material.roughness, fs_in.TexCoords).r;
 	float ao        = texture(material.ao, fs_in.TexCoords).r;

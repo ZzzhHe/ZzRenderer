@@ -56,12 +56,12 @@ Application::Application() {
 	}
 	
 	std::vector<std::string> skybox_faces = {
-		"resource/skybox/iceberg/right.jpg",
-		"resource/skybox/iceberg/left.jpg",
-		"resource/skybox/iceberg/top.jpg",
-		"resource/skybox/iceberg/bottom.jpg",
-		"resource/skybox/iceberg/front.jpg",
-		"resource/skybox/iceberg/back.jpg"
+		"resource/skybox/night/right.hdr",
+		"resource/skybox/night/left.hdr",
+		"resource/skybox/night/top.hdr",
+		"resource/skybox/night/bottom.hdr",
+		"resource/skybox/night/front.hdr",
+		"resource/skybox/night/back.hdr"
 	};
 	m_skybox = std::make_shared<Skybox>(skybox_faces, m_shaders["skybox"]);
 	
@@ -223,6 +223,7 @@ void Application::mainRendering(glm::mat4 view, glm::mat4 proj) {
 	}
 	
 	m_renderer.setDepthFunc(GL_LEQUAL);
+	m_renderer.enable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 	m_skybox->render(view, proj);
 	m_renderer.setDepthFunc(GL_LESS);
 }
@@ -252,13 +253,13 @@ void Application::loadRenderObjects() {
 //	m_models.emplace(m_current_id, model);
 //	m_current_id++;
 
-	modelMatrix = glm::mat4(1.0f);
-	auto model = std::make_shared<Model>("resource/model/plane/plane.obj");
-	modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, -2.001f, 0.0f));
-	modelMatrix = glm::scale(modelMatrix, glm::vec3(10.0f));
-	model->setModelMatrix(modelMatrix);
-	m_models.emplace(m_current_id, model);
-	m_current_id++;
+//	modelMatrix = glm::mat4(1.0f);
+//	auto model = std::make_shared<Model>("resource/model/plane/plane.obj");
+//	modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, -2.001f, 0.0f));
+//	modelMatrix = glm::scale(modelMatrix, glm::vec3(10.0f));
+//	model->setModelMatrix(modelMatrix);
+//	m_models.emplace(m_current_id, model);
+//	m_current_id++;
 
 //	modelMatrix = glm::mat4(1.0f);
 //	model = std::make_shared<Model>("resource/model/stone_wall/stone_wall.obj");
@@ -270,11 +271,20 @@ void Application::loadRenderObjects() {
 //	m_current_id++;
 	
 	modelMatrix = glm::mat4(1.0f);
-	model = std::make_shared<Model>("resource/model/jukebox/jukebox.obj");
+	auto model = std::make_shared<Model>("resource/model/jukebox/jukebox.obj");
 	modelMatrix = glm::scale(modelMatrix, glm::vec3(1.0f));
 	modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, -2.0f, 0.0f));
 	modelMatrix = glm::rotate(modelMatrix, glm::radians(-135.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	model->setModelMatrix(modelMatrix);
 	m_models.emplace(m_current_id, model);
 	m_current_id++;
+	
+//	modelMatrix = glm::mat4(1.0f);
+//	auto model = std::make_shared<Model>("resource/model/cerberus/cerberus.obj");
+//	modelMatrix = glm::scale(modelMatrix, glm::vec3(2.0f));
+//	modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, 0.0f, 0.0f));
+////	modelMatrix = glm::rotate(modelMatrix, glm::radians(-135.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+//	model->setModelMatrix(modelMatrix);
+//	m_models.emplace(m_current_id, model);
+//	m_current_id++;
 }
