@@ -17,8 +17,8 @@ enum struct TextureType {
 
 class Texture {
 public:
-    Texture(const std::vector<std::string>& paths, TextureType type); // for cube maps
     Texture(const std::string& path, const TextureType type);
+    Texture(const std::vector<std::string>& paths, TextureType type); // for cube maps
     Texture(const unsigned int width, const unsigned int height, const TextureType type);
     Texture(const unsigned int width, const unsigned int height, const unsigned int shadowCascadeLevelCount, const TextureType type);
 

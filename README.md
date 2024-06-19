@@ -1,16 +1,45 @@
 # ZzRenderer
 An OpenGL 3D PBR Graphics Renderer 
 
-+ **Model loading** from .obj files, decomposing them into meshes and materials using Assimp.
-+ Implemented directional and point lights to achieve immersive scene lighting, and implemented **cascaded shadow mapping** for directional lights.
-+ Enhanced visual details and lighting precision through **normal mapping** and **MSAA anti-aliasing**.
-+ Improved renderer usability by implementing the **skybox** and multiple **post-processing effects**.
-+ **Uniform Buffer Objects** (UBO): Optimized uniform variable management with UBOs, improving rendering performance and code organization.
-+ Ensured good code structure, making the project well-organized, easy to modify, and extend.
-+ ImGui Menu Integration: Integrated ImGui for an interactive user interface, allowing real-time control over rendering parameters.
+## Rendering
++ Forward rendering
++ Cook-Torrance microfacet specular BRDF
++ Lambertian diffuse BRDF
++ Roughness-Metallic workflow
++ Normal mapping
++ Dynamic directional light, point lights and spot lights
++ Directional Cascade Shadow maps
++ HDR / linear lighting
++ Skybox
++ Tone mapping
++ Gamma correction
+
+### to-do:
++ Point light shadow
++ Image based rendering
++ Clustered forward renderer
++ Deferred rendering
+
+## Post Processing
++ HDR Bloom
++ FXAA, MSAA
+
+### to-do:
++ Depth of field bokeh
 
 ![1](assets/1.png)
+![6](assets/6.png)
+![7](assets/7.png)
 ![5](assets/5.png)
 ![3](assets/3.png)
 ![4](assets/4.png)
+
+
+## Dependencies
++ OpenGL
++ glfw3
++ glad
++ glm
++ stb_image
++ assimp
 
